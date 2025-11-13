@@ -1,0 +1,6 @@
+# データディレクトリ
+data/
+
+# 環境設定
+.env.local
+.env.production
