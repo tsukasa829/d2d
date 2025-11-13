@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Todo } from '../types/todo';
-import * as db from '../lib/db';
+import { getTodos, createTodo, toggleTodoAction, deleteTodoAction } from '../lib/actions';
 
 interface TodoState {
   todos: Todo[];
@@ -20,7 +20,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   loadTodos: async (userId: string) => {
     set({ isLoading: true, error: null });
     try {
-      const todos = await db.getAllTodos(userId);
+      const todos = await getTodos(userId);
       set({ todos, isLoading: false });
     } catch (error) {
       set({ 
@@ -38,7 +38,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      const newTodo = await db.createTodo(userId, title);
+      const newTodo = await createTodo(userId, title);
       set(state => ({ 
         todos: [newTodo, ...state.todos],
         isLoading: false 
@@ -62,7 +62,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      const updatedTodo = await db.updateTodo(id, { completed: !todo.completed });
+      const updatedTodo = await toggleTodoAction(id, !todo.completed);
       set(state => ({
         todos: state.todos.map(t => t.id === id ? updatedTodo : t),
         isLoading: false
@@ -78,7 +78,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   deleteTodo: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
-      await db.deleteTodo(id);
+      await deleteTodoAction(id);
       set(state => ({
         todos: state.todos.filter(t => t.id !== id),
         isLoading: false

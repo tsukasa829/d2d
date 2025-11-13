@@ -51,9 +51,9 @@ async function executeMigration(migration: Migration): Promise<void> {
     // マイグレーションSQLを実行
     await client.query(migration.sql);
     
-    // schema_migrationsテーブルに記録
+    // schema_migrationsテーブルに記録（ON CONFLICT対応）
     await client.query(
-      'INSERT INTO schema_migrations (version) VALUES ($1)',
+      'INSERT INTO schema_migrations (version) VALUES ($1) ON CONFLICT (version) DO NOTHING',
       [migration.version]
     );
     
@@ -64,33 +64,47 @@ async function executeMigration(migration: Migration): Promise<void> {
   }
 }
 
+// グローバルロックでマイグレーションの並行実行を防ぐ
+let migrationPromise: Promise<void> | null = null;
+
 export async function runMigrations(): Promise<void> {
-  console.log('Starting database migrations...');
-  
-  try {
-    const migrations = await getMigrations();
-    const executedMigrations = await getExecutedMigrations();
-    
-    const pendingMigrations = migrations.filter(
-      migration => !executedMigrations.has(migration.version)
-    );
-    
-    if (pendingMigrations.length === 0) {
-      console.log('No pending migrations. Database is up to date.');
-      return;
-    }
-    
-    console.log(`Found ${pendingMigrations.length} pending migration(s)`);
-    
-    for (const migration of pendingMigrations) {
-      await executeMigration(migration);
-    }
-    
-    console.log('All migrations completed successfully!');
-  } catch (error) {
-    console.error('Migration failed:', error);
-    throw error;
+  // 既に実行中の場合は同じPromiseを返す
+  if (migrationPromise) {
+    return migrationPromise;
   }
+
+  migrationPromise = (async () => {
+    console.log('Starting database migrations...');
+    
+    try {
+      const migrations = await getMigrations();
+      const executedMigrations = await getExecutedMigrations();
+      
+      const pendingMigrations = migrations.filter(
+        migration => !executedMigrations.has(migration.version)
+      );
+      
+      if (pendingMigrations.length === 0) {
+        console.log('No pending migrations. Database is up to date.');
+        return;
+      }
+      
+      console.log(`Found ${pendingMigrations.length} pending migration(s)`);
+      
+      for (const migration of pendingMigrations) {
+        await executeMigration(migration);
+      }
+      
+      console.log('All migrations completed successfully!');
+    } catch (error) {
+      console.error('Migration failed:', error);
+      throw error;
+    } finally {
+      migrationPromise = null;
+    }
+  })();
+
+  return migrationPromise;
 }
 
 // スクリプトとして直接実行された場合

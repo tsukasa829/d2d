@@ -12,12 +12,12 @@ export default function TodoApp() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // マイグレーションとデモユーザーの初期化
-        const response = await fetch('/api/init', { method: 'POST' });
-        const data = await response.json();
+        // 動的インポートでServer Actionsを使用
+        const { initializeDatabase } = await import('../lib/actions');
+        const result = await initializeDatabase();
         
-        if (data.success && data.user) {
-          setUser(data.user);
+        if (result.success && result.user) {
+          setUser(result.user);
           setIsInitialized(true);
         }
       } catch (error) {

@@ -4,6 +4,4 @@ CREATE TABLE IF NOT EXISTS todos (
   title VARCHAR(500) NOT NULL,
   completed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_todos_user_id ON todos(user_id);
+)
