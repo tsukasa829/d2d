@@ -1,0 +1,5 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#4F46E5"/>
+  <text x="200" y="150" font-family="Arial" font-size="32" fill="white" text-anchor="middle">商品A</text>
+  <text x="200" y="190" font-family="Arial" font-size="18" fill="white" text-anchor="middle">¥2,980</text>
+</svg>

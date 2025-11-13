@@ -1,0 +1,6 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#3B82F6"/>
+  <circle cx="200" cy="120" r="40" fill="white"/>
+  <text x="200" y="135" font-family="Arial" font-size="48" fill="#3B82F6" text-anchor="middle" font-weight="bold">i</text>
+  <text x="200" y="220" font-family="Arial" font-size="24" fill="white" text-anchor="middle">お知らせ</text>
+</svg>
