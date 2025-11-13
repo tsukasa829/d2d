@@ -70,10 +70,13 @@ export async function updateTodo(id: string, data: Partial<Pick<Todo, 'title' | 
 
 export async function deleteTodo(id: string): Promise<void> {
   const client = getDBClient();
+  console.log('deleteTodo called with id:', id);
   const result = await client.query(
     'DELETE FROM todos WHERE id = $1',
     [id]
   );
+  
+  console.log('deleteTodo result:', { rowCount: result.rowCount });
   
   if (result.rowCount === 0) {
     throw new Error('Todo not found');

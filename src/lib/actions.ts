@@ -40,5 +40,13 @@ export async function toggleTodoAction(id: string, completed: boolean): Promise<
 }
 
 export async function deleteTodoAction(id: string): Promise<void> {
-  return db.deleteTodo(id);
+  console.log('deleteTodoAction called with id:', id);
+  try {
+    const result = await db.deleteTodo(id);
+    console.log('deleteTodoAction success');
+    return result;
+  } catch (error) {
+    console.error('deleteTodoAction error:', error);
+    throw error;
+  }
 }

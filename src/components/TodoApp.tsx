@@ -47,9 +47,7 @@ export default function TodoApp() {
   };
 
   const handleDeleteTodo = async (id: string) => {
-    if (confirm('このToDoを削除しますか?')) {
-      await deleteTodo(id);
-    }
+    await deleteTodo(id);
   };
 
   if (!isInitialized) {
