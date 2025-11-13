@@ -1,13 +1,112 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUserStore, useTodoStore } from '../stores';
+import { useUserStore } from '../stores';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Todo } from '../types/todo';
+import { createTodo as createTodoAction, deleteTodoAction, toggleTodoAction, getTodos as getTodosAction } from '../lib/actions';
 
 export default function TodoApp() {
   const { currentUser, setUser } = useUserStore();
-  const { todos, isLoading, error, loadTodos, addTodo, toggleTodo, deleteTodo } = useTodoStore();
   const [newTodoTitle, setNewTodoTitle] = useState('');
   const [isInitialized, setIsInitialized] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Todos取得用Query
+  const {
+    data: todos = [],
+    isLoading,
+    error
+  } = useQuery<Todo[], Error>({
+    queryKey: ['todos', currentUser?.id],
+    queryFn: async () => {
+      if (!currentUser) return [];
+      return await getTodosAction(currentUser.id);
+    },
+    enabled: !!currentUser && isInitialized,
+  });
+
+  // 追加Mutation (楽観的更新)
+  const addTodoMutation = useMutation({
+    mutationFn: async ({ userId, title }: { userId: string; title: string }) => {
+      return await createTodoAction(userId, title);
+    },
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: ['todos', variables.userId] });
+      const prev = queryClient.getQueryData<Todo[]>(['todos', variables.userId]) || [];
+      const optimistic: Todo = {
+        id: 'optimistic-' + Date.now(),
+        user_id: variables.userId,
+        title: variables.title,
+        completed: false,
+        created_at: new Date()
+      } as Todo;
+      queryClient.setQueryData(['todos', variables.userId], [optimistic, ...prev]);
+      return { prev };
+    },
+    onError: (_err, variables, context) => {
+      if (context?.prev) {
+        queryClient.setQueryData(['todos', variables.userId], context.prev);
+      }
+    },
+    onSuccess: (data, variables) => {
+      const current = queryClient.getQueryData<Todo[]>(['todos', variables.userId]) || [];
+      queryClient.setQueryData(['todos', variables.userId], [data, ...current.filter(t => !t.id.startsWith('optimistic-'))]);
+    },
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['todos', variables.userId] });
+    }
+  });
+
+  // Toggle Mutation
+  const toggleTodoMutation = useMutation({
+    mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
+      return await toggleTodoAction(id, completed);
+    },
+    onMutate: async (variables) => {
+      const userId = currentUser?.id;
+      if (!userId) return;
+      await queryClient.cancelQueries({ queryKey: ['todos', userId] });
+      const prev = queryClient.getQueryData<Todo[]>(['todos', userId]) || [];
+      queryClient.setQueryData(['todos', userId], prev.map(t => t.id === variables.id ? { ...t, completed: variables.completed } : t));
+      return { prev };
+    },
+    onError: (_err, _vars, context) => {
+      const userId = currentUser?.id;
+      if (userId && context?.prev) {
+        queryClient.setQueryData(['todos', userId], context.prev);
+      }
+    },
+    onSettled: () => {
+      const userId = currentUser?.id;
+      if (userId) queryClient.invalidateQueries({ queryKey: ['todos', userId] });
+    }
+  });
+
+  // Delete Mutation
+  const deleteTodoMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return await deleteTodoAction(id);
+    },
+    onMutate: async (variables) => {
+      const userId = currentUser?.id;
+      if (!userId) return;
+      await queryClient.cancelQueries({ queryKey: ['todos', userId] });
+      const prev = queryClient.getQueryData<Todo[]>(['todos', userId]) || [];
+      queryClient.setQueryData(['todos', userId], prev.filter(t => t.id !== variables.id));
+      return { prev };
+    },
+    onError: (_err, _vars, context) => {
+      const userId = currentUser?.id;
+      if (userId && context?.prev) {
+        queryClient.setQueryData(['todos', userId], context.prev);
+      }
+    },
+    onSettled: () => {
+      const userId = currentUser?.id;
+      if (userId) queryClient.invalidateQueries({ queryKey: ['todos', userId] });
+    }
+  });
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -28,26 +127,24 @@ export default function TodoApp() {
     initializeApp();
   }, [setUser]);
 
-  useEffect(() => {
-    if (currentUser && isInitialized) {
-      loadTodos(currentUser.id);
-    }
-  }, [currentUser, isInitialized, loadTodos]);
+  // React Queryが自動でロードするので不要になった
 
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || !newTodoTitle.trim()) return;
 
-    await addTodo(currentUser.id, newTodoTitle);
+    addTodoMutation.mutate({ userId: currentUser.id, title: newTodoTitle });
     setNewTodoTitle('');
   };
 
   const handleToggleTodo = async (id: string) => {
-    await toggleTodo(id);
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    toggleTodoMutation.mutate({ id, completed: !todo.completed });
   };
 
   const handleDeleteTodo = async (id: string) => {
-    await deleteTodo(id);
+    deleteTodoMutation.mutate({ id });
   };
 
   if (!isInitialized) {
@@ -75,7 +172,8 @@ export default function TodoApp() {
             ようこそ、<span className="font-semibold">{currentUser.name}</span>さん
           </p>
           <p className="text-sm text-gray-500 mt-1">
-            {process.env.NODE_ENV === 'development' ? 'PGlite' : 'PostgreSQL'}を使用中
+            {/* 環境判定を簡略化（型エラー回避） */}
+            データベース稼働中
           </p>
         </div>
 
@@ -101,7 +199,7 @@ export default function TodoApp() {
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
+            {error.message}
           </div>
         )}
 
