@@ -24,9 +24,17 @@ Bot(sales): こちらは商品画像です。詳細をご確認ください。
 
 Bot(sales)[image]: /images/sample2.svg
 
+User:
+- 太郎
+- 花子
+
 Bot(guide)[button]: 詳細ページへ | /products/detail
 
 Bot(sales): 他の商品もチェックしてみませんか？
+
+User:
+- 太郎
+- 花子
 
 Bot(sales)[buttons]:
 - 商品A | /products/a

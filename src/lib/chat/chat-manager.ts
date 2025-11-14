@@ -5,6 +5,7 @@ export class ChatManager {
   private index = 0;
   private messages: Message[] = [];
   private lastAnswer: string | null = null;
+  private seq = 0;
 
   constructor(script: ChatScript) {
     this.script = script;
@@ -35,7 +36,7 @@ export class ChatManager {
 
     // ユーザーメッセージを追加
     this.messages.push({
-      id: `m-${Date.now()}-u`,
+      id: `m-${Date.now()}-u-${this.seq++}`,
       type: 'user',
       content: choice,
       timestamp: new Date(),
@@ -63,7 +64,7 @@ export class ChatManager {
           ? this.script.bots[speakerId].avatar
           : (this.script.botAvatar || '/avatars/bot.png');
         this.messages.push({
-          id: `m-${Date.now()}-b`,
+          id: `m-${Date.now()}-b-${this.seq++}`,
           type: 'bot',
           content: text,
           timestamp: new Date(),
