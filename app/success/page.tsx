@@ -11,11 +11,36 @@ function SuccessContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const resolveSessionId = () => {
+      const qpUser = searchParams.get('userId') || searchParams.get('sessionId');
+      if (qpUser) return qpUser;
+
+      try {
+        const fromLocal = localStorage.getItem('sessionId');
+        if (fromLocal) return fromLocal;
+      } catch {}
+
+      try {
+        const persisted = JSON.parse(localStorage.getItem('session-storage') || 'null');
+        const persistedId = persisted?.state?.user?.sessionId as string | undefined;
+        if (persistedId) return persistedId;
+      } catch {}
+
+      if (user?.sessionId) return user.sessionId;
+      return undefined;
+    };
+
     const grantPass = async () => {
       try {
-        // URLパラメータからuserIdを取得（存在すれば）
-        const userIdFromUrl = searchParams.get('userId');
-        const targetUserId = userIdFromUrl || user?.sessionId;
+        // 最大5秒（10回）リトライしてsessionIdを解決
+        let targetUserId: string | undefined;
+        for (let i = 0; i < 10; i++) {
+          targetUserId = resolveSessionId();
+          if (targetUserId) break;
+          await sleep(500);
+        }
 
         if (!targetUserId) {
           setError('ユーザーIDが見つかりません');
@@ -23,7 +48,6 @@ function SuccessContent() {
           return;
         }
 
-        // API経由でフラグを立てる
         const res = await fetch(`/api/admin/users/${targetUserId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -34,7 +58,6 @@ function SuccessContent() {
           throw new Error('フラグの更新に失敗しました');
         }
 
-        // Zustand storeを更新（現在のユーザーの場合）
         if (targetUserId === user?.sessionId) {
           grant1DayPass();
         }
