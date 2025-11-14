@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { updateSession1DayPass } from '@/src/lib/session';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Note: Stripe SDKの初期化はリクエスト内で行い、ビルド時に環境変数が未設定でも失敗しないようにする
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
@@ -16,6 +16,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Webhook configuration error' }, { status: 400 });
     }
 
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      console.error('[stripe-webhook] Missing STRIPE_SECRET_KEY');
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
+    const stripe = require('stripe')(secretKey);
+
     // Stripeイベントの検証
     let event;
     try {
@@ -27,8 +35,8 @@ export async function POST(request: NextRequest) {
 
     // checkout.session.completed イベント処理
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object;
-      const sessionId = session.client_reference_id;
+      const session = event.data.object as any;
+      const sessionId = session.client_reference_id as string | undefined;
 
       if (sessionId) {
         console.log(`[stripe-webhook] Payment successful for user: ${sessionId}`);
