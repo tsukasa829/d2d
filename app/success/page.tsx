@@ -6,7 +6,7 @@ import { useSessionStore } from '@/src/stores/sessionStore';
 function SuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, grant1DayPass } = useSessionStore();
+  const { user, grant1DayPass, grantStandard } = useSessionStore();
   const [processing, setProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,6 +34,9 @@ function SuccessContent() {
 
     const grantPass = async () => {
       try {
+        // どの商品かを判定（ダッシュボードの成功URLに ?product=xxx を付与しておく）
+        const product = (searchParams.get('product') || '').toLowerCase();
+
         // 最大5秒（10回）リトライしてsessionIdを解決
         let targetUserId: string | undefined;
         for (let i = 0; i < 10; i++) {
@@ -48,10 +51,16 @@ function SuccessContent() {
           return;
         }
 
+        // デフォルトは1日パス、productに応じて切替
+        const body: any =
+          product === 'standard'
+            ? { hasStandard: true }
+            : { has1DayPass: true };
+
         const res = await fetch(`/api/admin/users/${targetUserId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ has1DayPass: true }),
+          body: JSON.stringify(body),
         });
 
         if (!res.ok) {
@@ -59,7 +68,11 @@ function SuccessContent() {
         }
 
         if (targetUserId === user?.sessionId) {
-          grant1DayPass();
+          if (product === 'standard') {
+            grantStandard();
+          } else {
+            grant1DayPass();
+          }
         }
 
         setProcessing(false);
