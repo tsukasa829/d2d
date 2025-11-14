@@ -1,6 +1,10 @@
+"use client";
 import StripeBuyButton from '@/src/components/stripe/StripeBuyButton';
+import { useSessionStore } from '@/src/stores/sessionStore';
 
 export default function OneDayPassPage() {
+  const { user } = useSessionStore();
+
   return (
     <div className="min-h-[100svh] bg-white">
       <div className="mx-auto max-w-2xl px-6 py-10">
@@ -20,7 +24,7 @@ export default function OneDayPassPage() {
       </div>
 
       <div className="mb-6">
-        <StripeBuyButton />
+        <StripeBuyButton clientReferenceId={user?.sessionId} />
       </div>
 
       <p className="text-xs text-gray-500">

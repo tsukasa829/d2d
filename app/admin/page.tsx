@@ -113,8 +113,8 @@ export default function AdminPage() {
                         : ''
                     }`}
                   >
-                    <td className="px-4 py-3 text-sm font-mono text-gray-900">
-                      {user.sessionId.slice(0, 8)}...
+                    <td className="px-4 py-3 text-xs sm:text-sm font-mono text-gray-900 break-all">
+                      {user.sessionId}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       {editingId === user.sessionId ? (

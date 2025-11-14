@@ -4,11 +4,12 @@ import React, { useEffect } from 'react';
 interface Props {
   buyButtonId?: string;
   publishableKey?: string;
+  clientReferenceId?: string;  // ユーザーIDを渡す
   className?: string;
   style?: React.CSSProperties;
 }
 
-export default function StripeBuyButton({ buyButtonId, publishableKey, className, style }: Props) {
+export default function StripeBuyButton({ buyButtonId, publishableKey, clientReferenceId, className, style }: Props) {
   // SSR 対応: クライアントでのみ描画
   if (typeof window === 'undefined') return null;
 
@@ -35,6 +36,7 @@ export default function StripeBuyButton({ buyButtonId, publishableKey, className
   return React.createElement('stripe-buy-button', {
     'buy-button-id': id!,
     'publishable-key': key!,
+    'client-reference-id': clientReferenceId,
     class: className,
     style: style as any,
   } as any);
