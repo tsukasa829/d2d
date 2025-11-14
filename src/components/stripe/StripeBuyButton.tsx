@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 interface Props {
   buyButtonId?: string;
@@ -31,15 +31,11 @@ export default function StripeBuyButton({ buyButtonId, publishableKey, className
     }
   }, [id, key]);
 
-  // カスタム要素に属性を渡す。TypeScript向けの型は別途定義しています。
-  return (
-    // eslint-disable-next-line react/no-unknown-property
-    <stripe-buy-button
-      buy-button-id={id!}
-      publishable-key={key!}
-      class={className}
-      // custom element の style は any として渡す
-      style={style as any}
-    />
-  );
+  // カスタム要素を直接生成して属性を渡す（JSXを使わず型チェックを回避）
+  return React.createElement('stripe-buy-button', {
+    'buy-button-id': id!,
+    'publishable-key': key!,
+    class: className,
+    style: style as any,
+  } as any);
 }
