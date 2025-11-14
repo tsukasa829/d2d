@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSessionStore } from '@/src/stores/sessionStore';
 
@@ -9,6 +9,7 @@ function SuccessContent() {
   const { user, grant1DayPass, grantStandard } = useSessionStore();
   const [processing, setProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasRunRef = useRef(false);
 
   useEffect(() => {
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -57,6 +58,14 @@ function SuccessContent() {
             ? { hasStandard: true }
             : { has1DayPass: true };
 
+        // 同一ユーザー・同一商品での重複実行ガード（セッション単位）
+        const dedupeKey = `${targetUserId}:${body.hasStandard ? 'standard' : '1day'}`;
+        const completedKey = `granted:${dedupeKey}`;
+        if (sessionStorage.getItem(completedKey) === '1') {
+          setProcessing(false);
+          return;
+        }
+
         const res = await fetch(`/api/admin/users/${targetUserId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -66,6 +75,9 @@ function SuccessContent() {
         if (!res.ok) {
           throw new Error('フラグの更新に失敗しました');
         }
+
+        // 完了を記録（同一セッション内での二重実行を防止）
+        sessionStorage.setItem(completedKey, '1');
 
         if (targetUserId === user?.sessionId) {
           if (product === 'standard') {
@@ -83,8 +95,10 @@ function SuccessContent() {
       }
     };
 
+    if (hasRunRef.current) return;
+    hasRunRef.current = true;
     grantPass();
-  }, [searchParams, user, grant1DayPass]);
+  }, [searchParams, user, grant1DayPass, grantStandard]);
 
   if (processing) {
     return (
