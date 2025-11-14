@@ -16,6 +16,7 @@ describe('sessionStore', () => {
     const mockUser = {
       sessionId: 'test-123',
       email: null,
+      trial: false,
       has1DayPass: false,
       hasStandard: false,
       createdAt: new Date(),
@@ -31,6 +32,7 @@ describe('sessionStore', () => {
     setUser({
       sessionId: 'test-123',
       email: null,
+      trial: false,
       has1DayPass: false,
       hasStandard: false,
       createdAt: new Date(),
@@ -41,11 +43,33 @@ describe('sessionStore', () => {
     expect(user?.email).toBe('test@example.com');
   });
 
+  it('toggleTrialでトライアルフラグを切り替え', () => {
+    const { setUser, toggleTrial } = useSessionStore.getState();
+    setUser({
+      sessionId: 'test-123',
+      email: null,
+      trial: false,
+      has1DayPass: false,
+      hasStandard: false,
+      createdAt: new Date(),
+      lastAccessAt: new Date(),
+    });
+    
+    // false → true
+    toggleTrial();
+    expect(useSessionStore.getState().user?.trial).toBe(true);
+    
+    // true → false
+    toggleTrial();
+    expect(useSessionStore.getState().user?.trial).toBe(false);
+  });
+
   it('grant1DayPassで1日パスを付与', () => {
     const { setUser, grant1DayPass } = useSessionStore.getState();
     setUser({
       sessionId: 'test-123',
       email: null,
+      trial: false,
       has1DayPass: false,
       hasStandard: false,
       createdAt: new Date(),
@@ -61,6 +85,7 @@ describe('sessionStore', () => {
     setUser({
       sessionId: 'test-123',
       email: null,
+      trial: false,
       has1DayPass: false,
       hasStandard: false,
       createdAt: new Date(),
