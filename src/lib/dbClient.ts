@@ -72,28 +72,30 @@ class PostgreSQLClient implements DBClient {
   }
 }
 
-// シングルトンインスタンス
-let dbClientInstance: DBClient | null = null;
+// Next.jsのホットリロードに対応するため、globalオブジェクトを使用
+const globalForDB = globalThis as unknown as {
+  dbClient: DBClient | undefined;
+};
 
 export function getDBClient(): DBClient {
-  if (!dbClientInstance) {
+  if (!globalForDB.dbClient) {
     const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.DATABASE_URL;
     
     if (isDevelopment) {
       console.log('Using PGlite for development');
-      dbClientInstance = new PGliteClient();
+      globalForDB.dbClient = new PGliteClient();
     } else {
       console.log('Using PostgreSQL for production');
-      dbClientInstance = new PostgreSQLClient();
+      globalForDB.dbClient = new PostgreSQLClient();
     }
   }
 
-  return dbClientInstance;
+  return globalForDB.dbClient;
 }
 
 export async function closeDBClient(): Promise<void> {
-  if (dbClientInstance) {
-    await dbClientInstance.close();
-    dbClientInstance = null;
+  if (globalForDB.dbClient) {
+    await globalForDB.dbClient.close();
+    globalForDB.dbClient = undefined;
   }
 }

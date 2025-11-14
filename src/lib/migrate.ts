@@ -48,8 +48,20 @@ async function executeMigration(migration: Migration): Promise<void> {
   console.log(`Executing migration: ${migration.filename}`);
   
   try {
-    // マイグレーションSQLを実行
-    await client.query(migration.sql);
+    // コメント行を除去してからSQLを';'で分割して個別に実行
+    const cleanedSql = migration.sql
+      .split('\n')
+      .filter(line => !line.trim().startsWith('--'))
+      .join('\n');
+    
+    const statements = cleanedSql
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+    
+    for (const statement of statements) {
+      await client.query(statement);
+    }
     
     // schema_migrationsテーブルに記録（ON CONFLICT対応）
     await client.query(
