@@ -12,7 +12,7 @@ interface SessionStore {
   grantStandard: () => void;
 }
 
-export const useSessionStore = create<SessionState>()(
+export const useSessionStore = create<SessionStore>()(
   persist(
     (set) => ({
       user: null,
@@ -21,6 +21,10 @@ export const useSessionStore = create<SessionState>()(
       updateEmail: (email) =>
         set((state) =>
           state.user ? { user: { ...state.user, email } } : state
+        ),
+      toggleTrial: () =>
+        set((state) =>
+          state.user ? { user: { ...state.user, trial: !state.user.trial } } : state
         ),
       grant1DayPass: () =>
         set((state) =>
