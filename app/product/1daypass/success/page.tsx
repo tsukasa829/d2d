@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState, Suspense, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useSessionStore } from '@/src/stores/sessionStore';
+import { useEffect, useState, Suspense, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSessionStore } from "@/stores/sessionStore";
 
 function SuccessContent() {
   const router = useRouter();
