@@ -9,7 +9,7 @@ interface Migration {
 }
 
 async function getMigrations(): Promise<Migration[]> {
-  const migrationsDir = path.join(process.cwd(), 'src', 'migrations');
+  const migrationsDir = path.join(process.cwd(), 'migrations');
   
   if (!fs.existsSync(migrationsDir)) {
     throw new Error(`Migrations directory not found: ${migrationsDir}`);
