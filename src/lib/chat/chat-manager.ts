@@ -18,7 +18,7 @@ export class ChatManager {
     this.lastAnswer = null;
     // 既存のタイマーはクリアしてから最初のBotメッセージを流す
     this.clearTimers();
-    this.emitBotUntilUser();
+    this.emitBotUntilUser(false);
     return [...this.messages];
   }
 
@@ -52,70 +52,101 @@ export class ChatManager {
     // 0.5秒後にBotメッセージを続行
     // タイマーの重複を避けるため既存タイマーをクリアしてからセット
     this.clearTimers();
-    const shortDelay = 500;
+    const shortDelay = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? process.env.NEXT_PUBLIC_BOT_LINE_DELAY ?? '0.5') * 1000;
     const t = setTimeout(() => {
-      this.emitBotUntilUser();
+      this.emitBotUntilUser(true);
     }, shortDelay);
     this.timers.push(t);
   }
 
   // 連続するBotノードを消化して、次のUserノード/終端まで進める
-  private emitBotUntilUser(): void {
-    // 1行ごとの遅延秒（環境変数かデフォルト）
-    const lineDelaySeconds = Number(process.env.NEXT_PUBLIC_BOT_LINE_DELAY ?? '0.5');
-    const lineDelayMs = Math.max(0, lineDelaySeconds) * 1000;
+  private emitBotUntilUser(delaySubsequent: boolean = false): void {
+    // 1メッセージごとの遅延秒（環境変数かデフォルト）
+    const msgDelaySec = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? process.env.NEXT_PUBLIC_BOT_LINE_DELAY ?? '0.5');
+    const msgDelayMs = Math.max(0, msgDelaySec) * 1000;
 
     let accDelay = 0;
     while (this.index < this.script.nodes.length) {
       const node: ScriptNode = this.script.nodes[this.index];
       if (node.type === 'bot') {
         const fullText = this.interpolate(node.content);
-        // 改行で分割して1行ごとに送る
-        const lines = fullText.split('\n');
-        const speakerId = node.speakerId ?? this.script.defaultBot;
-        const avatar = speakerId && this.script.bots && this.script.bots[speakerId]
-          ? this.script.bots[speakerId].avatar
-          : (this.script.botAvatar || '/avatars/bot.png');
+        const getAvatarFor = (n: ScriptNode) => {
+          const sp = n.speakerId ?? this.script.defaultBot;
+          return sp && this.script.bots && this.script.bots[sp]
+            ? this.script.bots[sp].avatar
+            : (this.script.botAvatar || '/avatars/bot.png');
+        };
 
-        // 先頭の1行は即時に追加しておく（initialize時の挙動に合わせるため）
-        if (lines.length > 0) {
-          const firstLine = lines[0];
-          this.messages.push({
-            id: `m-${Date.now()}-b-${this.seq++}`,
-            type: 'bot',
-            content: firstLine,
-            timestamp: new Date(),
-            avatar,
-            imageUrl: node.imageUrl,
-            buttonLabel: node.buttonLabel,
-            buttonUrl: node.buttonUrl,
-            buttons: node.buttons,
-          });
+        // Collect consecutive bot nodes to schedule per-message delay
+        const botNodes: ScriptNode[] = [];
+        let j = this.index;
+        while (j < this.script.nodes.length && this.script.nodes[j].type === 'bot') {
+          botNodes.push(this.script.nodes[j]);
+          j++;
         }
+        // Behavior:
+        // - If delaySubsequent is false (initial call), push all consecutive bot nodes immediately
+        // - If delaySubsequent is true, push only the first bot immediately and schedule subsequent bot nodes
         
+        // Push first bot message immediately
+        const firstNode = botNodes[0];
+        const firstText = this.interpolate(firstNode.content);
+        this.messages.push({
+          id: `m-${Date.now()}-b-${this.seq++}`,
+          type: 'bot',
+          content: firstText,
+          timestamp: new Date(),
+          avatar: getAvatarFor(firstNode),
+          imageUrl: firstNode.imageUrl,
+          buttonLabel: firstNode.buttonLabel,
+          buttonUrl: firstNode.buttonUrl,
+          buttons: firstNode.buttons,
+        });
 
-        // 1行目は既に追加したため、残りの行をスケジュール
-        for (let i = 1; i < lines.length; i++) {
-          const text = lines[i];
+        if (delaySubsequent) {
+          // Schedule subsequent bot nodes with per-message delay
+          for (let k = 1; k < botNodes.length; k++) {
+          const nodeToSend = botNodes[k];
+          const text = this.interpolate(nodeToSend.content);
           const t = setTimeout(() => {
             this.messages.push({
               id: `m-${Date.now()}-b-${this.seq++}`,
               type: 'bot',
               content: text,
               timestamp: new Date(),
-              avatar,
-              imageUrl: node.imageUrl,
-              buttonLabel: node.buttonLabel,
-              buttonUrl: node.buttonUrl,
-              buttons: node.buttons,
+              avatar: getAvatarFor(nodeToSend),
+              imageUrl: nodeToSend.imageUrl,
+              buttonLabel: nodeToSend.buttonLabel,
+              buttonUrl: nodeToSend.buttonUrl,
+              buttons: nodeToSend.buttons,
             });
-          }, accDelay + lineDelayMs * (i - 1));
+          }, accDelay + msgDelayMs * (k - 1));
           this.timers.push(t);
+          }
+          // Advance accDelay by the number of scheduled messages
+          accDelay += msgDelayMs * Math.max(0, botNodes.length - 1);
+        } else {
+          // No delay: push all remaining bot messages immediately
+          for (let k = 1; k < botNodes.length; k++) {
+            const nodeToSend = botNodes[k];
+            const text = this.interpolate(nodeToSend.content);
+            this.messages.push({
+              id: `m-${Date.now()}-b-${this.seq++}`,
+              type: 'bot',
+              content: text,
+              timestamp: new Date(),
+              avatar: getAvatarFor(nodeToSend),
+              imageUrl: nodeToSend.imageUrl,
+              buttonLabel: nodeToSend.buttonLabel,
+              buttonUrl: nodeToSend.buttonUrl,
+              buttons: nodeToSend.buttons,
+            });
+          }
         }
-        // 次の行のスケジュールは既に積算済みとして、offsetを調整
-        accDelay += lineDelayMs * Math.max(0, lines.length - 1);
 
-        this.index++;
+        // Advance accDelay by the number of scheduled messages
+        // Move index past all processed bot nodes
+        this.index = j;
         continue;
       }
       if (node.type === 'user') {
