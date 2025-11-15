@@ -90,6 +90,10 @@ describe('ChatManager', () => {
     mgr.handleUserChoice('山田太郎');
     // 直後はまだBotが追加されない
     expect(mgr.getMessages().filter(m => m.type==='bot').length).toBe(1);
+    // 最初のタイマー（handleUserChoiceの500ms）が経過
+    vi.advanceTimersByTime(500);
+    // まだ次のBotメッセージはスケジュールされたが表示されていない（500ms後にスケジュール開始）
+    // 次のBotメッセージは500ms後にスケジュールされ、さらに500ms後に表示される
     vi.advanceTimersByTime(500);
     // 追加された
     const bots = mgr.getMessages().filter(m => m.type==='bot');
@@ -106,7 +110,8 @@ describe('ChatManager', () => {
     expect(msgs[1].avatar).toBe('/avatars/sales.png');
     // ユーザー選択後の次のBot（省略形）はdefaultBotのアバター
     mgr.handleUserChoice('進む');
-    vi.advanceTimersByTime(500);
+    // handleUserChoiceの500ms + 最初のBotメッセージの500ms = 1000ms
+    vi.advanceTimersByTime(1000);
     const all = mgr.getMessages().filter(m => m.type==='bot');
     expect(all[2].avatar).toBe('/avatars/guide.png');
   });

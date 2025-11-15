@@ -86,48 +86,33 @@ export class ChatManager {
         }
         // Behavior:
         // - If delaySubsequent is false (initial call), push all consecutive bot nodes immediately
-        // - If delaySubsequent is true, push only the first bot immediately and schedule subsequent bot nodes
+        // - If delaySubsequent is true, schedule all bot nodes with per-message delay
         
-        // Push first bot message immediately
-        const firstNode = botNodes[0];
-        const firstText = this.interpolate(firstNode.content);
-        this.messages.push({
-          id: `m-${Date.now()}-b-${this.seq++}`,
-          type: 'bot',
-          content: firstText,
-          timestamp: new Date(),
-          avatar: getAvatarFor(firstNode),
-          imageUrl: firstNode.imageUrl,
-          buttonLabel: firstNode.buttonLabel,
-          buttonUrl: firstNode.buttonUrl,
-          buttons: firstNode.buttons,
-        });
-
         if (delaySubsequent) {
-          // Schedule subsequent bot nodes with per-message delay
-          for (let k = 1; k < botNodes.length; k++) {
-          const nodeToSend = botNodes[k];
-          const text = this.interpolate(nodeToSend.content);
-          const t = setTimeout(() => {
-            this.messages.push({
-              id: `m-${Date.now()}-b-${this.seq++}`,
-              type: 'bot',
-              content: text,
-              timestamp: new Date(),
-              avatar: getAvatarFor(nodeToSend),
-              imageUrl: nodeToSend.imageUrl,
-              buttonLabel: nodeToSend.buttonLabel,
-              buttonUrl: nodeToSend.buttonUrl,
-              buttons: nodeToSend.buttons,
-            });
-          }, accDelay + msgDelayMs * (k - 1));
-          this.timers.push(t);
+          // Schedule all bot nodes with per-message delay (including first)
+          for (let k = 0; k < botNodes.length; k++) {
+            const nodeToSend = botNodes[k];
+            const text = this.interpolate(nodeToSend.content);
+            const t = setTimeout(() => {
+              this.messages.push({
+                id: `m-${Date.now()}-b-${this.seq++}`,
+                type: 'bot',
+                content: text,
+                timestamp: new Date(),
+                avatar: getAvatarFor(nodeToSend),
+                imageUrl: nodeToSend.imageUrl,
+                buttonLabel: nodeToSend.buttonLabel,
+                buttonUrl: nodeToSend.buttonUrl,
+                buttons: nodeToSend.buttons,
+              });
+            }, accDelay + msgDelayMs * k);
+            this.timers.push(t);
           }
-          // Advance accDelay by the number of scheduled messages
-          accDelay += msgDelayMs * Math.max(0, botNodes.length - 1);
+          // Advance accDelay by the total scheduled time
+          accDelay += msgDelayMs * botNodes.length;
         } else {
-          // No delay: push all remaining bot messages immediately
-          for (let k = 1; k < botNodes.length; k++) {
+          // No delay: push all bot messages immediately
+          for (let k = 0; k < botNodes.length; k++) {
             const nodeToSend = botNodes[k];
             const text = this.interpolate(nodeToSend.content);
             this.messages.push({
@@ -144,7 +129,6 @@ export class ChatManager {
           }
         }
 
-        // Advance accDelay by the number of scheduled messages
         // Move index past all processed bot nodes
         this.index = j;
         continue;
