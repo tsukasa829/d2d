@@ -56,6 +56,19 @@ describe('parseScript - 画像・ボタン構文', () => {
   });
 });
 
+describe('parseScript - o/x 選択肢 + requireCorrect', () => {
+  it('o/x と個別wrongメッセージ、ヘッダ設定を解釈', () => {
+    const md = `---\nuserAvatar: /u.png\ndefaultBot: guide\nrequireCorrect: true\nwrongMessage: "違います。もう一度。"\n---\n\nBot(guide): Q\n\nUser:\n- o: 正解\n- x: 不正解 | 個別メッセージ\n`;
+    const s = parseScript(md);
+    expect(s.requireCorrect).toBe(true);
+    expect(s.wrongMessage).toBe('違います。もう一度。');
+    expect(s.nodes[1].type).toBe('user');
+    const ch = s.nodes[1].choices!;
+    expect(ch[0]).toMatchObject({ label: '正解', correct: true });
+    expect(ch[1]).toMatchObject({ label: '不正解', correct: false, wrongMessage: '個別メッセージ' });
+  });
+});
+
 describe('parseScript - 複数Bot', () => {
   const mdMulti = `---\nuserAvatar: /avatars/user.png\ndefaultBot: guide\nbots:\n  guide:\n    displayName: ガイド\n    avatar: /avatars/guide.png\n  sales:\n    displayName: セールス\n    avatar: /avatars/sales.png\n---\n\nBot(guide): ようこそ\nBot(sales)[image]: /images/sample2.svg\n\nUser:\n- 進む\n- 戻る\n\nBot: 既定ボットメッセージ\n`;
 
@@ -118,5 +131,28 @@ describe('ChatManager', () => {
     vi.advanceTimersByTime(1000);
     const all = mgr.getMessages().filter(m => m.type==='bot');
     expect(all[2].avatar).toBe('/avatars/guide.png');
+  });
+
+  it('requireCorrect=true で誤答時は進まずフィードバックを表示', () => {
+    const md = `---\nuserAvatar: /u.png\ndefaultBot: guide\nrequireCorrect: true\nwrongMessage: "違います。もう一度。"\nbots:\n  guide:\n    avatar: /g.png\n---\n\nBot(guide): Q\n\nUser:\n- x: ばつ\n- o: まる\n\nBot: 次\n`;
+    const s = parseScript(md);
+    const mgr = new ChatManager(s);
+    mgr.initialize();
+    // 誤答を選ぶ
+    mgr.handleUserChoice('ばつ');
+    // 即時にフィードバック(bot)が追加され、次のBotには進まない
+    const bots = mgr.getMessages().filter(m => m.type==='bot');
+    expect(bots.length).toBe(2); // 初期のQ + フィードバック
+    expect(bots[1].content).toBe('違います。もう一度。');
+    // タイマーを進めても次のBotは未表示（indexが進んでいない）
+    vi.advanceTimersByTime(2000);
+    const bots2 = mgr.getMessages().filter(m => m.type==='bot');
+    expect(bots2.length).toBe(2);
+
+    // 正解を選び直すと進行
+    mgr.handleUserChoice('まる');
+    vi.advanceTimersByTime(1000);
+    const bots3 = mgr.getMessages().filter(m => m.type==='bot');
+    expect(bots3.some(b => b.content === '次')).toBe(true);
   });
 });

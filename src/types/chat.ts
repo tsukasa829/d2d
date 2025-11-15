@@ -13,6 +13,8 @@ export interface Message {
 export interface Choice {
   label: string;
   value: string;
+  correct?: boolean;
+  wrongMessage?: string;
 }
 
 export interface NavigationButton {
@@ -35,6 +37,8 @@ export interface ChatScript {
   userAvatar: string;
   botAvatar?: string;
   defaultBot?: string;
+  requireCorrect?: boolean;
+  wrongMessage?: string;
   bots?: Record<string, { displayName?: string; avatar: string }>;
   nodes: ScriptNode[];
 }

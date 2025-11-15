@@ -11,6 +11,8 @@ export function parseScript(markdown: string): ChatScript {
   const userAvatar = String(data?.userAvatar || '/avatars/user.png');
   const botAvatar = data?.botAvatar ? String(data.botAvatar) : '/avatars/bot.png';
   const defaultBot = data?.defaultBot ? String(data.defaultBot) : undefined;
+  const requireCorrect = typeof data?.requireCorrect === 'boolean' ? Boolean(data.requireCorrect) : undefined;
+  const wrongMessage = typeof data?.wrongMessage === 'string' ? String(data.wrongMessage) : undefined;
   const bots = typeof data?.bots === 'object' ? (data.bots as Record<string, { displayName?: string; avatar: string }>) : undefined;
 
   const lines = content.split(/\r?\n/);
@@ -120,8 +122,37 @@ export function parseScript(markdown: string): ChatScript {
         const l = lines[i].trim();
         if (!l) { i++; continue; }
         if (l.startsWith('- ')) {
-          const label = l.replace(/^-\s+/, '');
-          choices.push({ label, value: label });
+          const raw = l.replace(/^-\s+/, '');
+          // 新形式: o:/x: 記法の解釈
+          const oxMatch = raw.match(/^(o|x):\s*(.+)$/);
+          if (oxMatch) {
+            const kind = oxMatch[1];
+            const rest = oxMatch[2];
+            const [labelPart, wrongMsgPart] = rest.split('|').map(s => s?.trim());
+            const c: Choice = {
+              label: labelPart,
+              value: labelPart,
+              correct: kind === 'o',
+            };
+            if (kind === 'x' && wrongMsgPart) c.wrongMessage = wrongMsgPart;
+            choices.push(c);
+            i++;
+            continue;
+          }
+
+          // 旧形式: 全角括弧の（正解）/（外れ）を含む場合に解釈
+          let label = raw;
+          let correct: boolean | undefined = undefined;
+          if (/（正解）/.test(label)) {
+            label = label.replace(/（正解）/g, '').trim();
+            correct = true;
+          } else if (/（外れ）/.test(label)) {
+            label = label.replace(/（外れ）/g, '').trim();
+            correct = false;
+          }
+          const c: Choice = { label, value: label };
+          if (typeof correct === 'boolean') c.correct = correct;
+          choices.push(c);
           i++;
           continue;
         }
@@ -135,5 +166,5 @@ export function parseScript(markdown: string): ChatScript {
     i++;
   }
 
-  return { userAvatar, botAvatar, defaultBot, bots, nodes };
+  return { userAvatar, botAvatar, defaultBot, requireCorrect, wrongMessage, bots, nodes };
 }

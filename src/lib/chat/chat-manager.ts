@@ -36,6 +36,9 @@ export class ChatManager {
     const node = this.script.nodes[this.index];
     if (!node || node.type !== 'user') return;
 
+    // 現在の選択肢から選択内容を特定
+    const selected = node.choices?.find(c => c.value === choice || c.label === choice);
+
     // ユーザーメッセージを追加
     this.messages.push({
       id: `m-${Date.now()}-u-${this.seq++}`,
@@ -46,13 +49,34 @@ export class ChatManager {
     });
     this.lastAnswer = choice;
 
-    // 次へ進める
+    const requireCorrect = !!this.script.requireCorrect;
+    const isCorrect = selected?.correct === true || !requireCorrect;
+
+    if (!isCorrect) {
+      // 不正解: 進行を止めて、その場でフィードバックを表示（defaultBot が話す）
+      const feedback = selected?.wrongMessage || this.script.wrongMessage || '違います。もう一度選んでください。';
+      const defaultBotId = this.script.defaultBot;
+      const avatar = defaultBotId && this.script.bots && this.script.bots[defaultBotId]
+        ? this.script.bots[defaultBotId].avatar
+        : (this.script.botAvatar || '/avatars/bot.png');
+
+      this.messages.push({
+        id: `m-${Date.now()}-b-${this.seq++}`,
+        type: 'bot',
+        content: feedback,
+        timestamp: new Date(),
+        avatar,
+      });
+      // index は据え置き、タイマーは張らない
+      return;
+    }
+
+    // 正解 or 正解不要: 次へ進める
     this.index++;
 
-    // 0.5秒後にBotメッセージを続行
-    // タイマーの重複を避けるため既存タイマーをクリアしてからセット
+    // 次のBotメッセージを遅延で続行
     this.clearTimers();
-    const shortDelay = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? process.env.NEXT_PUBLIC_BOT_LINE_DELAY ?? '0.5') * 1000;
+    const shortDelay = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? '1') * 1000;
     const t = setTimeout(() => {
       this.emitBotUntilUser(true);
     }, shortDelay);
@@ -62,7 +86,7 @@ export class ChatManager {
   // 連続するBotノードを消化して、次のUserノード/終端まで進める
   private emitBotUntilUser(delaySubsequent: boolean = false): void {
     // 1メッセージごとの遅延秒（環境変数かデフォルト）
-    const msgDelaySec = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? process.env.NEXT_PUBLIC_BOT_LINE_DELAY ?? '0.5');
+    const msgDelaySec = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? '1');
     const msgDelayMs = Math.max(0, msgDelaySec) * 1000;
 
     let accDelay = 0;
