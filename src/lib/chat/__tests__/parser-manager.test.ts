@@ -73,7 +73,11 @@ describe('parseScript - 複数Bot', () => {
 });
 
 describe('ChatManager', () => {
-  beforeEach(() => vi.useFakeTimers());
+  beforeEach(() => {
+    // テスト環境で遅延秒数を明示的に設定（未設定時は1秒デフォルトになるため）
+    process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY = '0.5';
+    vi.useFakeTimers();
+  });
 
   it('initializeで最初のBotメッセージを返す', () => {
     const s = parseScript(md);
