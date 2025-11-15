@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { sessionId } = await params;
-    const file = path.join(process.cwd(), 'src', 'scripts', `${sessionId}.md`);
+    const file = path.join(process.cwd(), 'docs', 'chats', `${sessionId}.md`);
     const data = await fs.readFile(file, 'utf8');
     return new NextResponse(data, { status: 200, headers: { 'content-type': 'text/markdown; charset=utf-8' } });
   } catch (e) {
