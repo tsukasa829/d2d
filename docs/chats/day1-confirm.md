@@ -1,26 +1,46 @@
 ---
-userAvatar: /avatars/user.svg
-defaultBot: guide
+userAvatar: /avatars/greef.svg
+defaultBot: doctor
+requireCorrect: true
+wrongMessage: "選択が違います。もう一度選んでください。"
 bots:
-  guide:
-    displayName: ガイド
-    avatar: /avatars/guide.svg
+  doctor:
+    displayName: ドクター猫
+    avatar: /avatars/doctor.svg
 ---
 
-Bot(guide): Day 1 - 確認ページへようこそ！
-
-Bot(guide): このプログラムを開始する前に、いくつか確認させてください。
+Bot(doctor): D2Dは７日であなたの性格を変えるプログラムです。しかし中途半端にやると逆効果になります。続けますか？Day2も無料で利用できます。
 
 User:
-- はい
-- いいえ
+- o: はい
+- x: いいえ | 続ける意思がある方のみ進めます。準備ができたら「はい」を選択してください。
 
-Bot(guide): {{answer}}と回答いただきました。ありがとうございます！
 
-Bot(guide): それでは、プログラムを開始しましょう。
+Bot(doctor): 普段は医師・経営者専門にオーダーメイドのセッションをしております。要望が多かったため一般の方にも使っていただいております。ただし全員を救えるわけではありません。いくつか質問させていただき、D2Dでお力になれるかを確認させてください
+
+---
+
+Bot(doctor): あなたは今、心や性格で悩みがありますか？
 
 User:
-- 開始する
-- 後で
+- o: はい
+- x: いいえ | このプログラムは悩みのある方を想定しています。状況が変わったら「はい」を選択してください。
 
-Bot(guide): 準備ができたらいつでも戻ってきてくださいね。
+---
+
+Bot(doctor): 本当に、自分の症状を治したいですか？
+
+User:
+- o: はい
+- x: いいえ | 本気の意思が必要です。準備が整ったら「はい」を選択してください。
+
+---
+
+Bot(doctor): あなたは会社員 or 個人事業ですか？
+
+User:
+- o: 会社員
+- o: 個人事業
+- x: 休職中・専業主婦 | 就業中の方向けのプログラムとなります。お力になれず申し訳ありません。
+
+
