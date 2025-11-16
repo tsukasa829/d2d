@@ -1,29 +1,47 @@
 "use client";
 import Image from 'next/image';
+import { motion } from 'motion/react';
 import { Message } from '../../types/chat';
 
-export default function MessageBubble({ message }: { message: Message }) {
+export default function MessageBubble({ message, index = 0 }: { message: Message; index?: number }) {
   const isUser = message.type === 'user';
+  
   return (
-    <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-      {!isUser && (
-        <Avatar src={message.avatar || '/avatars/bot.png'} alt="bot" />
-      )}
-      <div className={`${isUser ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'} rounded-2xl px-4 py-2 shadow max-w-[70%]`}>
-        {message.content}
-      </div>
-      {isUser && (
-        <Avatar src={message.avatar || '/avatars/user.png'} alt="user" />
-      )}
-    </div>
-  );
-}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
+    >
+      <div className={`flex items-end gap-2 max-w-[75%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+        {/* Avatar */}
+        <div className="flex-shrink-0 flex flex-col items-center gap-1">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 shadow-lg overflow-hidden ${
+            isUser 
+              ? 'bg-gradient-to-br from-[#E9D5FF]/80 to-[#B794F6]/80' 
+              : 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80'
+          }`}>
+            {message.avatar && message.avatar.startsWith('/') ? (
+              <Image src={message.avatar} alt={isUser ? 'user' : 'bot'} width={40} height={40} unoptimized className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-lg">{message.avatar || (isUser ? '😊' : '🧑‍⚕️')}</span>
+            )}
+          </div>
+        </div>
 
-function Avatar({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-gray-200 bg-white">
-      {/* Image最適化を避けるためunoptimizedにする */}
-      <Image src={src} alt={alt} width={32} height={32} unoptimized />
-    </div>
+        {/* Message Bubble */}
+        <div className="flex flex-col">
+          <div
+            className={`px-4 py-3 rounded-2xl shadow-lg backdrop-blur-md border ${
+              isUser
+                ? 'bg-gradient-to-br from-[#B794F6]/70 to-[#9333EA]/70 text-white border-white/30 rounded-br-sm'
+                : 'bg-white/70 border-white/50 text-gray-800 rounded-bl-sm'
+            }`}
+          >
+            <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

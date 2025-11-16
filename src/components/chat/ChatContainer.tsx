@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
+import { Menu, MoreVertical } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import ChoiceButtons from './ChoiceButtons';
 import ImageMessage from './ImageMessage';
@@ -70,13 +71,26 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   };
 
   return (
-    <div className="flex flex-col h-[100svh] bg-gray-50">
-      <div className="px-4 py-3 border-b bg-white font-semibold">シンプルBot</div>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
+    <div className="h-screen flex flex-col max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
+      {/* Header */}
+      <div className="bg-white/20 backdrop-blur-md border-b border-white/30 text-white px-4 py-4 shadow-lg">
+        <div className="flex items-center justify-between">
+          <button onClick={() => window.history.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="tracking-wide font-semibold">D2D カウンセリング</h1>
+          <button className="p-2 hover:bg-white/20 rounded-lg transition-colors opacity-0 pointer-events-none">
+            <MoreVertical className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Chat Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {loading ? (
-          <div className="text-center text-gray-500">読み込み中...</div>
+          <div className="text-center text-white drop-shadow-lg">読み込み中...</div>
         ) : (
-          messages.map((m) => {
+          messages.map((m, index) => {
             // 画像メッセージ
             if (m.imageUrl) {
               return <ImageMessage key={m.id} imageUrl={m.imageUrl} isBot={m.type === 'bot'} />;
@@ -90,11 +104,13 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
               return <NavigationButton key={m.id} label={m.buttonLabel} url={m.buttonUrl} isBot={m.type === 'bot'} />;
             }
             // 通常テキストメッセージ
-            return <MessageBubble key={m.id} message={m} />;
+            return <MessageBubble key={m.id} message={m} index={index} />;
           })
         )}
       </div>
-      <div className="px-4 py-3 border-t bg-white">
+
+      {/* Input Area with Choice Buttons */}
+      <div className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
         <ChoiceButtons choices={choices} onSelect={handleSelect} />
       </div>
     </div>
