@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
-import { runMigrations } from '@/src/lib/migrate';
-import * as db from '@/src/lib/db';
+import { runMigrations } from '@/lib/migrate';
+import * as db from '@/lib/db';
 
 export async function POST() {
   try {
-    // マイグレーション実行
+    // マイグレーション実衁E
     await runMigrations();
 
-    // デモユーザーの取得または作成
+    // チE��ユーザーの取得また�E作�E
     const demoEmail = 'demo@example.com';
     let user = await db.getUserByEmail(demoEmail);
 
     if (!user) {
-      user = await db.createUser(demoEmail, 'デモユーザー');
+      user = await db.createUser(demoEmail, 'チE��ユーザー');
     }
 
     return NextResponse.json({

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from 'react';
-import { useSessionStore } from '@/src/stores/sessionStore';
+import { useSessionStore } from '@/lib/stores/sessionStore';
 
 export function SessionInitializer({ children }: { children: React.ReactNode }) {
   const { user, setUser } = useSessionStore();

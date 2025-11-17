@@ -1,5 +1,5 @@
 import { getDBClient } from './dbClient';
-import type { User } from '@/src/types/session';
+import type { User } from '@/lib/types/session';
 
 export async function getAllSessions(): Promise<User[]> {
   const db = getDBClient();

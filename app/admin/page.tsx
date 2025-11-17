@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
-import type { User } from '@/src/types/session';
-import { useSessionStore } from '@/src/stores/sessionStore';
+import type { User } from '@/lib/types/session';
+import { useSessionStore } from '@/lib/stores/sessionStore';
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -76,7 +76,7 @@ export default function AdminPage() {
     <div className="min-h-[100svh] bg-gray-50">
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">ユーザー管理 (Admin)</h1>
+          <h1 className="text-3xl font-bold">ユーザー管理(Admin)</h1>
           <button
             onClick={fetchUsers}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -206,7 +206,7 @@ export default function AdminPage() {
                             onClick={() => setDeletingId(null)}
                             className="px-2 py-1 bg-gray-300 text-gray-700 rounded text-xs hover:bg-gray-400"
                           >
-                            取消
+                            キャンセル
                           </button>
                         </div>
                       ) : (

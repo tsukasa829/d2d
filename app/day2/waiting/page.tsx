@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 export default function Day2WaitingPage() {
   const router = useRouter();
   const totalSeconds = 3600;
-  // デモとして 45:45 から開始
+  // チE��として 45:45 から開姁E
   const remainingSeconds = 2745;
   const progress = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
   const minutes = Math.floor(remainingSeconds / 60);
@@ -23,8 +23,8 @@ export default function Day2WaitingPage() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="tracking-wide">待機中</h1>
-            <p className="text-white/90 text-sm mt-1">カウンセラーが応答します</p>
+            <h1 className="tracking-wide">征E��中</h1>
+            <p className="text-white/90 text-sm mt-1">カウンセラーが応答しまぁE/p>
           </div>
         </div>
       </div>
@@ -71,11 +71,11 @@ export default function Day2WaitingPage() {
           <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/50">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#E9D5FF]/80 to-[#B794F6]/80 backdrop-blur-sm border border-white/40 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-2xl">🧑‍⚕️</span>
+                <span className="text-2xl">🧑‍⚕�E�E/span>
               </div>
               <div className="flex-1">
-                <h3 className="text-gray-800 mb-1">カウンセラー手配中</h3>
-                <p className="text-gray-700 text-sm leading-relaxed">専門のカウンセラーを手配しています。通常、1時間以内に応答いたします。</p>
+                <h3 className="text-gray-800 mb-1">カウンセラー手�E中</h3>
+                <p className="text-gray-700 text-sm leading-relaxed">専門のカウンセラーを手配してぁE��す。通常、E時間以冁E��応答いたします、E/p>
               </div>
             </div>
           </div>
@@ -86,8 +86,8 @@ export default function Day2WaitingPage() {
                 <span className="text-2xl">💡</span>
               </div>
               <div className="flex-1">
-                <h3 className="text-gray-800 mb-1">お待ちの間に</h3>
-                <p className="text-gray-700 text-sm leading-relaxed">お話ししたい内容をメモしておくと、スムーズにカウンセリングが始められます。</p>
+                <h3 className="text-gray-800 mb-1">お征E��の間に</h3>
+                <p className="text-gray-700 text-sm leading-relaxed">お話ししたい冁E��をメモしておくと、スムーズにカウンセリングが始められます、E/p>
               </div>
             </div>
           </div>
@@ -95,10 +95,10 @@ export default function Day2WaitingPage() {
 
         <div className="w-full mt-8 space-y-3">
           <button onClick={() => router.back()} className="w-full px-6 py-4 bg-white/60 backdrop-blur-md border border-white/60 text-[#9333EA] rounded-2xl hover:shadow-xl hover:bg-white/70 transition-all shadow-lg">
-            チャット画面に戻る
+            チャチE��画面に戻めE
           </button>
           <Link href="/" className="w-full block px-6 py-4 bg-white/40 backdrop-blur-md text-[#9333EA] rounded-2xl border border-white/50 hover:bg-white/50 transition-all shadow-lg text-center">
-            プログラムを確認
+            プログラムを確誁E
           </Link>
         </div>
       </div>

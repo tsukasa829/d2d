@@ -6,9 +6,9 @@ import ChoiceButtons from './ChoiceButtons';
 import ImageMessage from './ImageMessage';
 import NavigationButton from './NavigationButton';
 import NavigationButtons from './NavigationButtons';
-import { ChatManager } from '../../lib/chat/chat-manager';
-import { parseScript } from '../../lib/chat/script-parser';
-import { Message } from '../../types/chat';
+import { ChatManager } from '@/lib/chat/chat-manager';
+import { parseScript } from '@/lib/chat/script-parser';
+import { Message } from '@/lib/types/chat';
 
 export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);

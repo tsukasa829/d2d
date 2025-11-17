@@ -3,8 +3,8 @@
 // 本番環境用マイグレーションスクリプト
 // 使用方法: npm run migrate:prod
 
-import { runMigrations } from '../src/lib/migrate';
-import { closeDBClient } from '../src/lib/dbClient';
+import { runMigrations } from '../lib/migrate';
+import { closeDBClient } from '../lib/dbClient';
 
 console.log('Starting database migration...');
 

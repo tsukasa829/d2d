@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { updateSession1DayPass } from '@/src/lib/session';
+import { updateSession1DayPass } from '@/lib/session';
 
-// Note: Stripe SDKの初期化はリクエスト内で行い、ビルド時に環境変数が未設定でも失敗しないようにする
+// Note: Stripe SDKの初期化はリクエスト時に行い、ビルド時に環境変数が未設定でも失敗しないようにする
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
-    // checkout.session.completed イベント処理
+    // checkout.session.completed イベントの処理
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as any;
       const sessionId = session.client_reference_id as string | undefined;

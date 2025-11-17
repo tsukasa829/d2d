@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
-import { createSession } from '@/src/lib/session';
-import { runMigrations } from '@/src/lib/migrate';
+import { createSession } from '@/lib/session';
+import { runMigrations } from '@/lib/migrate';
 
 export async function POST(request: NextRequest) {
   try {
-    // 初回アクセス時にマイグレーション実行
+    // 初回アクセス時にマイグレーション実衁E
     await runMigrations();
     
     const sessionId = randomUUID();

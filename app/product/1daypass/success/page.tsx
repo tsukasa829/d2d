@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSessionStore } from "@/stores/sessionStore";
+import { useSessionStore } from "@/lib/stores/sessionStore";
 
 function SuccessContent() {
   const router = useRouter();
@@ -48,7 +48,6 @@ function SuccessContent() {
           setProcessing(false);
           return;
         }
-
         // 同一ユーザーでの重複実行ガード（セッション単位）
         const dedupeKey = `${targetUserId}:1day`;
         const completedKey = `granted:${dedupeKey}`;
@@ -67,7 +66,7 @@ function SuccessContent() {
           throw new Error('フラグの更新に失敗しました');
         }
 
-        // 完了を記録（同一セッション内での二重実行を防止）
+        // 完了記録（同一セッション内の二重実行を防止）
         sessionStorage.setItem(completedKey, '1');
 
         if (targetUserId === user?.sessionId) {
@@ -119,7 +118,7 @@ function SuccessContent() {
     <div className="min-h-[100svh] bg-green-50 flex items-center justify-center">
       <div className="max-w-md p-8 bg-white rounded-lg shadow-lg text-center">
         <div className="text-green-500 text-6xl mb-4">✓</div>
-        <h1 className="text-2xl font-bold text-green-600 mb-4">1日パス購入完了！</h1>
+        <h1 className="text-2xl font-bold text-green-600 mb-4">1日パス購入完了</h1>
         <p className="text-gray-700 mb-6">
           1日パスが有効になりました。<br />
           初日のコンテンツをお楽しみください。

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { NavigationButton as NavigationButtonType } from '@/src/types/chat';
+import { NavigationButton as NavigationButtonType } from '@/lib/types/chat';
 
 interface NavigationButtonsProps {
   buttons: NavigationButtonType[];

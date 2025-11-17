@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useUserStore } from '../stores';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Todo } from '../types/todo';
-import { createTodo as createTodoAction, deleteTodoAction, toggleTodoAction, getTodos as getTodosAction } from '../lib/actions';
+import { Todo } from '@/lib/types/todo';
+import { createTodo as createTodoAction, deleteTodoAction, toggleTodoAction, getTodos as getTodosAction } from '@/lib/actions';
 
 export default function TodoApp() {
   const { currentUser, setUser } = useUserStore();

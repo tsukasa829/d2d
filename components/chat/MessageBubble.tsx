@@ -1,7 +1,7 @@
 "use client";
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { Message } from '../../types/chat';
+import { Message } from '@/lib/types/chat';
 
 export default function MessageBubble({ message, index = 0 }: { message: Message; index?: number }) {
   const isUser = message.type === 'user';

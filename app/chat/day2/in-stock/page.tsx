@@ -4,7 +4,7 @@ export default function Day2InStockPage() {
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-4 text-green-600">在庫あり</h1>
         <p className="text-gray-600">
-          Day 2のコンテンツは現在ご利用いただけます。
+          Day 2のコンチE��チE�E現在ご利用ぁE��だけます、E
         </p>
       </div>
     </div>

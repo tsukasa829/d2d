@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSessionStore } from '@/stores/sessionStore';
+import { useSessionStore } from '@/lib/stores/sessionStore';
 import OneDayPassSuccessPage from '../page';
 
 // モック設定
@@ -10,7 +10,7 @@ vi.mock('next/navigation', () => ({
   useSearchParams: vi.fn(),
 }));
 
-vi.mock('@/stores/sessionStore', () => ({
+vi.mock('@/lib/stores/sessionStore', () => ({
   useSessionStore: vi.fn(),
 }));
 
@@ -64,11 +64,11 @@ describe('OneDayPassSuccessPage', () => {
     expect(screen.getByText('処理中...')).toBeInTheDocument();
   });
 
-  it('成功時に「1日パス購入完了！」を表示する', async () => {
+  it('成功時に、「1日パス購入完了」を表示する', async () => {
     render(<OneDayPassSuccessPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('1日パス購入完了！')).toBeInTheDocument();
+      expect(screen.getByText('1日パス購入完了')).toBeInTheDocument();
     }, { timeout: 6000 });
 
     expect(screen.getByText(/1日パスが有効になりました/)).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe('OneDayPassSuccessPage', () => {
     }, { timeout: 6000 });
   });
 
-  it('sessionIdが解決できない場合はエラーを表示する', async () => {
+  it('sessionIdが解決できない場合にエラーを表示する', async () => {
     (useSessionStore as any).mockReturnValue({
       user: null,
       grant1DayPass: mockGrant1DayPass,
@@ -134,7 +134,7 @@ describe('OneDayPassSuccessPage', () => {
     }, { timeout: 7000 });
   }, 10000);
 
-  it('sessionStorageのデデュープキーで重複実行を防ぐ', async () => {
+  it('sessionStorageのユニークキーで重複実行を防ぐ', async () => {
     global.sessionStorage.getItem = vi.fn((key) => {
       if (key === 'granted:test-user-123:1day') return '1';
       return null;
@@ -143,7 +143,7 @@ describe('OneDayPassSuccessPage', () => {
     render(<OneDayPassSuccessPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('1日パス購入完了！')).toBeInTheDocument();
+      expect(screen.getByText('1日パス購入完了')).toBeInTheDocument();
     }, { timeout: 6000 });
 
     // fetchが呼ばれないことを確認

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Todo } from '../types/todo';
-import { getTodos, createTodo, toggleTodoAction, deleteTodoAction } from '../lib/actions';
+import { getTodos, createTodo, toggleTodoAction, deleteTodoAction } from '../actions';
 
 interface TodoState {
   todos: Todo[];

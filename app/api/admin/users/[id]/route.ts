@@ -6,7 +6,7 @@ import {
   updateSessionStandard,
   updateSessionTrial,
   deleteSession 
-} from '@/src/lib/session';
+} from '@/lib/session';
 
 export async function GET(
   request: NextRequest,
