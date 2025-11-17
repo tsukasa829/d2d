@@ -6,6 +6,9 @@ import { defineConfig, devices } from '@playwright/test';
  * - Fast fail on errors
  * - Optimized for Copilot development
  */
+const baseURL = process.env.BASE_URL || 'http://localhost:3000';
+const isExternal = !!process.env.BASE_URL && !/localhost|127\.0\.0\.1/i.test(process.env.BASE_URL);
+
 export default defineConfig({
   testDir: './e2e',
   
@@ -32,8 +35,8 @@ export default defineConfig({
   ],
   
   use: {
-    // ベースURL
-    baseURL: 'http://localhost:3000',
+    // ベースURL（環境変数で上書き可能）
+    baseURL,
     
     // トレース（失敗時のみ）
     trace: 'retain-on-failure',
@@ -52,11 +55,13 @@ export default defineConfig({
     },
   ],
   
-  // devサーバー自動起動（オプション）
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  // devサーバー自動起動（BASE_URLが外部の場合は無効化）
+  webServer: isExternal
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 120_000,
+      },
 });

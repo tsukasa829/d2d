@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * - 7日間プログラムの見出しが存在すること
  * - 少なくとも1つのDay項目が存在すること
  */
-test('トップページが正常に表示される', async ({ page }) => {
+test('トップページが正常に表示される @smoke', async ({ page }) => {
   // / にアクセス
   await page.goto('/');
   
@@ -91,4 +91,39 @@ test('購入成功後に管理画面で1日パスが有効になる', async ({ p
   
   // ボタンのスタイルが有効状態（bg-green-100）であることを確認
   await expect(oneDayPassButton).toHaveClass(/bg-green-100/);
+});
+
+/**
+ * スタンダードプラン購入成功後、管理画面でスタンダードが有効になることを確認
+ * - /product/standerd/success にアクセス（購入完了処理をトリガー）
+ * - /admin にアクセス
+ * - ハイライト行のスタンダード項目が「有効」になっていること
+ */
+test('スタンダードプラン購入成功後に管理画面でスタンダードが有効になる', async ({ page }) => {
+  // まず / にアクセスしてセッション初期化
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  
+  // /product/standerd/success にアクセス（購入完了処理）
+  await page.goto('/product/standerd/success');
+  
+  // 処理完了まで待機（「スタンダードプラン購入完了」が表示されるまで）
+  await expect(page.getByText('スタンダードプラン購入完了')).toBeVisible({ timeout: 10000 });
+  
+  // /admin にアクセス
+  await page.goto('/admin');
+  
+  // ハイライトされた行を探す
+  const highlightedRow = page.locator('tr.bg-blue-50');
+  await expect(highlightedRow).toBeVisible();
+  
+  // ハイライト行内のスタンダード列（5列目）のボタンを取得
+  const standardButton = highlightedRow.locator('td').nth(4).locator('button');
+  await expect(standardButton).toBeVisible();
+  
+  // ボタンのテキストが「有効」であることを確認
+  await expect(standardButton).toHaveText('有効');
+  
+  // ボタンのスタイルが有効状態（bg-blue-100）であることを確認
+  await expect(standardButton).toHaveClass(/bg-blue-100/);
 });

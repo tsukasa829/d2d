@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import * as actions from '../actions';
-import type { Todo } from '../../types/todo';
+import type { Todo } from '../types/todo';
 
 // Server Actionsをモック
 vi.mock('../actions', () => ({

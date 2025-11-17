@@ -4,15 +4,15 @@ import * as db from '@/lib/db';
 
 export async function POST() {
   try {
-    // マイグレーション実衁E
+    // マイグレーション実行
     await runMigrations();
 
-    // チE��ユーザーの取得また�E作�E
+    // デモユーザーの取得または作成
     const demoEmail = 'demo@example.com';
     let user = await db.getUserByEmail(demoEmail);
 
     if (!user) {
-      user = await db.createUser(demoEmail, 'チE��ユーザー');
+      user = await db.createUser(demoEmail, 'デモユーザー');
     }
 
     return NextResponse.json({

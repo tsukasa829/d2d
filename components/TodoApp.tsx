@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUserStore } from '../stores';
+import { useUserStore } from '@/lib/stores';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Todo } from '@/lib/types/todo';
 import { createTodo as createTodoAction, deleteTodoAction, toggleTodoAction, getTodos as getTodosAction } from '@/lib/actions';
@@ -112,7 +112,7 @@ export default function TodoApp() {
     const initializeApp = async () => {
       try {
         // 動的インポートでServer Actionsを使用
-        const { initializeDatabase } = await import('../lib/actions');
+        const { initializeDatabase } = await import('@/lib/actions');
         const result = await initializeDatabase();
         
         if (result.success && result.user) {

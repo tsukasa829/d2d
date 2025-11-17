@@ -1,5 +1,5 @@
 import matter from 'gray-matter';
-import { ChatScript, ScriptNode, Choice } from '../../types/chat';
+import { ChatScript, ScriptNode, Choice } from '../types/chat';
 
 // シンプルなMarkdown行パーサ
 // - フロントマター: userAvatar, botAvatar

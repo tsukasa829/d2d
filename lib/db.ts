@@ -1,6 +1,6 @@
 import { getDBClient } from './dbClient';
-import { User } from '../types/user';
-import { Todo } from '../types/todo';
+import { User } from './types/user';
+import { Todo } from './types/todo';
 
 export async function getAllTodos(userId: string): Promise<Todo[]> {
   const client = getDBClient();

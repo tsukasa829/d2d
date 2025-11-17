@@ -2,8 +2,8 @@
 
 import * as db from './db';
 import { runMigrations } from './migrate';
-import { User } from '../types/user';
-import { Todo } from '../types/todo';
+import { User } from './types/user';
+import { Todo } from './types/todo';
 
 export async function initializeDatabase(): Promise<{ success: boolean; user: User | null; error?: string }> {
   try {

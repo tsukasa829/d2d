@@ -1,4 +1,4 @@
-import { ChatScript, Message, ScriptNode } from '../../types/chat';
+import { ChatScript, Message, ScriptNode } from '../types/chat';
 
 export class ChatManager {
   private script: ChatScript;
