@@ -28,3 +28,67 @@ test('トップページが正常に表示される', async ({ page }) => {
     }
   });
 });
+
+/**
+ * 管理画面で現在のユーザーがハイライトされ、1日パスが無効になっていることを確認
+ * - /admin にアクセス
+ * - ハイライトされた行（bg-blue-50）が存在すること
+ * - その行の1日パス項目が「無効」になっていること
+ */
+test('管理画面でハイライト行の1日パスが無効になっている', async ({ page }) => {
+  // まず / にアクセスしてセッション初期化
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  
+  // /admin にアクセス
+  await page.goto('/admin');
+  
+  // ハイライトされた行を探す（bg-blue-50 クラスを持つ tr）
+  const highlightedRow = page.locator('tr.bg-blue-50');
+  await expect(highlightedRow).toBeVisible();
+  
+  // ハイライト行内の1日パス列（4列目）のボタンを取得
+  const oneDayPassButton = highlightedRow.locator('td').nth(3).locator('button');
+  await expect(oneDayPassButton).toBeVisible();
+  
+  // ボタンのテキストが「無効」であることを確認
+  await expect(oneDayPassButton).toHaveText('無効');
+  
+  // ボタンのスタイルが無効状態（bg-gray-100）であることを確認
+  await expect(oneDayPassButton).toHaveClass(/bg-gray-100/);
+});
+
+/**
+ * 1日パス購入成功後、管理画面で1日パスが有効になることを確認
+ * - /product/1daypass/success にアクセス（購入完了処理をトリガー）
+ * - /admin にアクセス
+ * - ハイライト行の1日パス項目が「有効」になっていること
+ */
+test('購入成功後に管理画面で1日パスが有効になる', async ({ page }) => {
+  // まず / にアクセスしてセッション初期化
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  
+  // /product/1daypass/success にアクセス（購入完了処理）
+  await page.goto('/product/1daypass/success');
+  
+  // 処理完了まで待機（「1日パス購入完了」が表示されるまで）
+  await expect(page.getByText('1日パス購入完了')).toBeVisible({ timeout: 10000 });
+  
+  // /admin にアクセス
+  await page.goto('/admin');
+  
+  // ハイライトされた行を探す
+  const highlightedRow = page.locator('tr.bg-blue-50');
+  await expect(highlightedRow).toBeVisible();
+  
+  // ハイライト行内の1日パス列（4列目）のボタンを取得
+  const oneDayPassButton = highlightedRow.locator('td').nth(3).locator('button');
+  await expect(oneDayPassButton).toBeVisible();
+  
+  // ボタンのテキストが「有効」であることを確認
+  await expect(oneDayPassButton).toHaveText('有効');
+  
+  // ボタンのスタイルが有効状態（bg-green-100）であることを確認
+  await expect(oneDayPassButton).toHaveClass(/bg-green-100/);
+});
