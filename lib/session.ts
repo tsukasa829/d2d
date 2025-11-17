@@ -4,7 +4,7 @@ import type { User } from '@/lib/types/session';
 export async function getAllSessions(): Promise<User[]> {
   const db = getDBClient();
   const result = await db.query(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, created_at, last_access_at
+    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, created_at, last_access_at
      FROM sessions
      ORDER BY created_at DESC`
   );
@@ -14,6 +14,7 @@ export async function getAllSessions(): Promise<User[]> {
     trial: row.trial,
     has1DayPass: row.has_1day_pass,
     hasStandard: row.has_standard,
+    stage: Number(row.stage) ?? 0,
     createdAt: new Date(row.created_at),
     lastAccessAt: new Date(row.last_access_at),
   }));
@@ -22,7 +23,7 @@ export async function getAllSessions(): Promise<User[]> {
 export async function getSessionById(sessionId: string): Promise<User | null> {
   const db = getDBClient();
   const result = await db.query(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, created_at, last_access_at
+    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, created_at, last_access_at
      FROM sessions
      WHERE session_id = $1`,
     [sessionId]
@@ -35,6 +36,7 @@ export async function getSessionById(sessionId: string): Promise<User | null> {
     trial: row.trial,
     has1DayPass: row.has_1day_pass,
     hasStandard: row.has_standard,
+    stage: Number(row.stage) ?? 0,
     createdAt: new Date(row.created_at),
     lastAccessAt: new Date(row.last_access_at),
   };
@@ -44,8 +46,8 @@ export async function createSession(sessionId: string): Promise<User> {
   const db = getDBClient();
   const now = new Date();
   await db.query(
-    `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, created_at, last_access_at)
-     VALUES ($1, NULL, FALSE, FALSE, FALSE, $2, $3)
+    `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, stage, created_at, last_access_at)
+     VALUES ($1, NULL, FALSE, FALSE, FALSE, 0, $2, $3)
      ON CONFLICT (session_id) DO NOTHING`,
     [sessionId, now, now]
   );
@@ -55,6 +57,7 @@ export async function createSession(sessionId: string): Promise<User> {
     trial: false,
     has1DayPass: false,
     hasStandard: false,
+    stage: 0,
     createdAt: now,
     lastAccessAt: now,
   };
@@ -89,6 +92,14 @@ export async function updateSessionTrial(sessionId: string, trial: boolean): Pro
   await db.query(
     `UPDATE sessions SET trial = $1, last_access_at = CURRENT_TIMESTAMP WHERE session_id = $2`,
     [trial, sessionId]
+  );
+}
+
+export async function updateSessionStage(sessionId: string, stage: number): Promise<void> {
+  const db = getDBClient();
+  await db.query(
+    `UPDATE sessions SET stage = $1, last_access_at = CURRENT_TIMESTAMP WHERE session_id = $2`,
+    [stage, sessionId]
   );
 }
 

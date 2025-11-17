@@ -10,6 +10,8 @@ export default function AdminPage() {
   const [editEmail, setEditEmail] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user: currentUser } = useSessionStore();
+  const [editingStageId, setEditingStageId] = useState<string | null>(null);
+  const [stageInput, setStageInput] = useState<string>('');
 
   const fetchUsers = async () => {
     try {
@@ -64,6 +66,30 @@ export default function AdminPage() {
     }
   };
 
+  const handleStageSave = async (sessionId: string) => {
+    const value = stageInput.trim();
+    if (!value) {
+      setEditingStageId(null);
+      return;
+    }
+    const numeric = Number(value);
+    if (isNaN(numeric)) {
+      alert('数値を入力してください');
+      return;
+    }
+    try {
+      await fetch(`/api/admin/users/${sessionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage: numeric }),
+      });
+      setEditingStageId(null);
+      fetchUsers();
+    } catch (error) {
+      console.error('Failed to update stage:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[100svh] bg-white flex items-center justify-center">
@@ -96,6 +122,7 @@ export default function AdminPage() {
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">セッションID</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">メール</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Stage</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trial</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">1日パス</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Standard</th>
@@ -151,6 +178,35 @@ export default function AdminPage() {
                           >
                             編集
                           </button>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {editingStageId === user.sessionId ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={stageInput}
+                            onChange={(e) => setStageInput(e.target.value)}
+                            className="px-2 py-1 border rounded text-xs w-20"
+                            placeholder={String(user.stage ?? 0)}
+                          />
+                          <button
+                            onClick={() => handleStageSave(user.sessionId)}
+                            className="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                          >保存</button>
+                          <button
+                            onClick={() => setEditingStageId(null)}
+                            className="px-2 py-1 bg-gray-300 text-gray-700 rounded text-xs hover:bg-gray-400"
+                          >取消</button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-gray-800 text-xs sm:text-sm">{user.stage?.toFixed(1) ?? '0.0'}</span>
+                          <button
+                            onClick={() => { setEditingStageId(user.sessionId); setStageInput(String(user.stage)); }}
+                            className="text-blue-500 hover:text-blue-700 text-xs"
+                          >編集</button>
                         </div>
                       )}
                     </td>

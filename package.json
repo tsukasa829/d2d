@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "migrate": "tsx src/lib/migrate.ts",
+    "migrate": "tsx lib/migrate.ts",
     "migrate:prod": "tsx scripts/migrate.ts",
     "db:reset": "rm -rf ./data/pglite && npm run migrate",
     "test": "vitest run",

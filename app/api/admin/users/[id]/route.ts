@@ -5,6 +5,7 @@ import {
   updateSession1DayPass, 
   updateSessionStandard,
   updateSessionTrial,
+  updateSessionStage,
   deleteSession 
 } from '@/lib/session';
 
@@ -38,6 +39,9 @@ export async function PATCH(
     }
     if (body.trial !== undefined) {
       await updateSessionTrial(id, body.trial);
+    }
+    if (body.stage !== undefined) {
+      await updateSessionStage(id, body.stage);
     }
     if (body.has1DayPass !== undefined) {
       await updateSession1DayPass(id, body.has1DayPass);
