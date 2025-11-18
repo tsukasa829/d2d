@@ -7,6 +7,7 @@ interface SessionStore {
   setUser: (user: User) => void;
   clearUser: () => void;
   updateEmail: (email: string) => void;
+  updateStage: (stage: number) => void;
   toggleTrial: () => void;
   grant1DayPass: () => void;
   grantStandard: () => void;
@@ -21,6 +22,10 @@ export const useSessionStore = create<SessionStore>()(
       updateEmail: (email) =>
         set((state) =>
           state.user ? { user: { ...state.user, email } } : state
+        ),
+      updateStage: (stage) =>
+        set((state) =>
+          state.user ? { user: { ...state.user, stage } } : state
         ),
       toggleTrial: () =>
         set((state) =>
