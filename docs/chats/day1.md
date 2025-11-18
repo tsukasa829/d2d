@@ -1,15 +1,15 @@
 ---
-userAvatar: /avatars/greef.svg
+userAvatar: /avatars/doctorCat.png
 defaultBot: doctor
 requireCorrect: true
 wrongMessage: "違います。もう一度選んでください。"
 bots:
   doctor:
     displayName: ドクター猫
-    avatar: /avatars/doctor.svg
+    avatar: /avatars/doctorCat.png
   other:
     displayName: 相手猫
-    avatar: /avatars/other.svg
+    avatar: /avatars/doctorCat.png
 ---
 
 Bot(other): さっきの集合写真、君が写ってなかったにゃ…ごめんにゃ…
