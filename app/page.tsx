@@ -9,9 +9,6 @@ export default function Home() {
   const { user } = useSessionStore();
   const stage = user?.stage ?? 0;
 
-  // 現在のDayを判定: stage未満で最も近いday
-  const currentDay = Math.floor(stage) + 1;
-
   const days = [
     { day: 1, title: "初回カウンセリング", completed: stage >= 1, path: "/chat/day1-confirm" },
     { day: 2, title: "ストレス要因の特定", completed: stage >= 2, path: "/chat/day2" },
@@ -47,57 +44,41 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="space-y-3">
           {days.map((day, index) => {
-            const isCurrent = day.day === currentDay && !day.completed;
+            const currentDay = Math.floor(stage);
+            const isCurrentDay = day.day === currentDay && !day.completed;
+            
             const DayCard = (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`relative bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${
+                className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${
                   day.completed 
-                    ? 'border-white/60 opacity-60 cursor-not-allowed' 
-                    : isCurrent
-                    ? 'border-[#9333EA] bg-gradient-to-br from-white/80 to-purple-50/80 shadow-2xl cursor-pointer'
+                    ? 'border-white/60 opacity-60 cursor-not-allowed'
+                    : isCurrentDay
+                    ? 'border-[#9333EA] hover:shadow-xl hover:bg-white/70 cursor-pointer'
                     : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
                 }`}
               >
-                {isCurrent && (
-                  <>
-                    <motion.div
-                      className="absolute -inset-0.5 bg-gradient-to-r from-[#9333EA] via-[#B794F6] to-[#9333EA] rounded-2xl opacity-75 blur-sm"
-                      animate={{ opacity: [0.5, 0.75, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-[#9333EA] to-[#B794F6] text-white text-xs px-2 py-1 rounded-full shadow-lg z-10">
-                      今ココ
-                    </div>
-                  </>
-                )}
-                <div className="relative p-5 flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border shadow-lg ${
+                <div className="p-5 flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 shadow-lg ${
                     day.completed 
-                      ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white border-white/40' 
-                      : isCurrent
-                      ? 'bg-gradient-to-br from-[#9333EA] to-[#B794F6] text-white border-white/60 shadow-xl'
-                      : 'bg-white/60 text-[#9333EA] border-white/40'
+                      ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white' 
+                      : 'bg-white/60 text-[#9333EA]'
                   }`}>
                     {day.completed ? (
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
-                      <span className={isCurrent ? 'font-bold' : ''}>{day.day}</span>
+                      <span>{day.day}</span>
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className={`${day.completed ? 'text-gray-500 line-through' : isCurrent ? 'text-[#9333EA] font-semibold' : 'text-gray-800'}`}>
-                        Day {day.day}
-                      </h3>
+                      <h3 className={`${day.completed ? 'text-gray-500 line-through' : 'text-gray-800'}`}>Day {day.day}</h3>
                     </div>
-                    <p className={`${day.completed ? 'text-gray-500' : isCurrent ? 'text-gray-800 font-medium' : 'text-gray-700'}`}>
-                      {day.title}
-                    </p>
+                    <p className={`${day.completed ? 'text-gray-500' : 'text-gray-700'}`}>{day.title}</p>
                   </div>
                 </div>
               </motion.div>
