@@ -21,10 +21,17 @@ export default function Home() {
     const calculateRemaining = () => {
       if (!user.stageupDate) return;
       
+      // stageupDateは既にJST（日本時間）で保存されているため、そのまま使用
       const stageupTime = new Date(user.stageupDate).getTime();
       const oneHourLater = stageupTime + 60 * 60 * 1000; // 1時間後
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((oneHourLater - now) / 1000));
+      
+      console.log('[Countdown] stageupDate:', user.stageupDate);
+      console.log('[Countdown] stageupTime:', new Date(stageupTime).toLocaleString('ja-JP'));
+      console.log('[Countdown] oneHourLater:', new Date(oneHourLater).toLocaleString('ja-JP'));
+      console.log('[Countdown] now:', new Date(now).toLocaleString('ja-JP'));
+      console.log('[Countdown] remaining seconds:', remaining);
       
       if (remaining === 0) {
         setRemainingSeconds(null);
@@ -45,13 +52,13 @@ export default function Home() {
   };
 
   const days = [
-    { day: 1, title: "初回カウンセリング", completed: stage >= 1, accessible: stage >= 0, path: "/chat/day1-confirm" },
-    { day: 2, title: "ストレス要因の特定", completed: stage >= 2, accessible: stage >= 1, path: "/chat/day2" },
-    { day: 3, title: "対処法の検討", completed: stage >= 3, accessible: stage >= 2, path: "/chat/day3" },
-    { day: 4, title: "実践とフィードバック", completed: stage >= 4, accessible: stage >= 3, path: "/chat/day4" },
-    { day: 5, title: "進捗確認", completed: stage >= 5, accessible: stage >= 4, path: "/chat/day5" },
-    { day: 6, title: "振り返りと調整", completed: stage >= 6, accessible: stage >= 5, path: "/chat/day6" },
-    { day: 7, title: "総合評価", completed: stage >= 7, accessible: stage >= 6, path: "/chat/day7" },
+    { day: 1, title: "初回カウンセリング", completed: stage > 1, accessible: stage >= 1, path: "/chat/day1-confirm" },
+    { day: 2, title: "ストレス要因の特定", completed: stage > 2, accessible: stage >= 2, path: "/chat/day2" },
+    { day: 3, title: "対処法の検討", completed: stage > 3, accessible: stage >= 3, path: "/chat/day3" },
+    { day: 4, title: "実践とフィードバック", completed: stage > 4, accessible: stage >= 4, path: "/chat/day4" },
+    { day: 5, title: "進捗確認", completed: stage > 5, accessible: stage >= 5, path: "/chat/day5" },
+    { day: 6, title: "最終調整", completed: stage > 6, accessible: stage >= 6, path: "/chat/day6" },
+    { day: 7, title: "振り返りとまとめ", completed: stage > 7, accessible: stage >= 7, path: "/chat/day7" },
   ];
   const completedCount = days.filter((d) => d.completed).length;
 
@@ -81,6 +88,7 @@ export default function Home() {
           {days.map((day, index) => {
             const isActive = day.accessible && !day.completed;
             const isLocked = !day.accessible;
+            const isCurrentStage = day.day === Math.floor(stage); // 現在のステージ（最後に完了した日）
             
             const DayCard = (
               <motion.div
@@ -120,10 +128,10 @@ export default function Home() {
                     <p className={`${day.completed ? 'text-gray-500' : isLocked ? 'text-gray-400' : 'text-gray-700'}`}>
                       {day.title}
                     </p>
-                    {isActive && remainingSeconds !== null && remainingSeconds > 0 && (
+                    {isCurrentStage && remainingSeconds !== null && remainingSeconds > 0 && (
                       <div className="mt-2 flex items-center gap-2 text-sm text-[#9333EA]">
                         <Clock className="w-4 h-4" />
-                        <span>{formatTime(remainingSeconds)} で開始可能</span>
+                        <span>{formatTime(remainingSeconds)} で次へ進めます</span>
                       </div>
                     )}
                   </div>
