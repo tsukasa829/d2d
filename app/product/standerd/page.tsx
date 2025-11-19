@@ -35,7 +35,6 @@ export default function ServicePlansPage() {
       name: '医師プラン',
       price: '¥3,000,000',
       icon: <Stethoscope className="w-8 h-8" />,
-      popular: true,
       gradient: 'from-[#B794F6] to-[#9333EA]',
       features: [
         '医療従事者専門カウンセリング',
@@ -49,8 +48,9 @@ export default function ServicePlansPage() {
     {
       id: 'personal',
       name: '個人プラン',
-      price: '¥600,000',
+      price: '¥1,000,000',
       icon: <User className="w-8 h-8" />,
+      popular: true,
       gradient: 'from-[#E9D5FF] to-[#B794F6]',
       features: [
         '月1回カウンセリング（年間8回）',
@@ -126,7 +126,7 @@ export default function ServicePlansPage() {
 
                 <div className="flex justify-center">
                   <Link
-                    href="/product/1daypass"
+                    href={process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL || '/product/1daypass'}
                     className={`mt-6 px-8 py-3 rounded-xl transition-all backdrop-blur-md border shadow-lg ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[#9333EA]/80 to-[#B794F6]/80 text-white hover:shadow-xl hover:scale-[1.02] border-white/40'
@@ -140,21 +140,6 @@ export default function ServicePlansPage() {
             </div>
           </motion.div>
         ))}
-      </div>
-
-      <div className="px-6 py-6 text-center space-y-4">
-        <Link
-          href="/product/1daypass"
-          className="w-full block px-6 py-4 bg-white/60 backdrop-blur-md border-2 border-white/60 text-[#9333EA] rounded-2xl hover:shadow-xl hover:bg-white/80 transition-all hover:scale-[1.02] shadow-lg"
-        >
-          <span className="flex items-center justify-center gap-2">
-            <Sparkles className="w-5 h-5" /> ¥500で試してみる
-          </span>
-        </Link>
-        <div className="text-gray-700 text-sm drop-shadow-sm">
-          <p>全プラン初回相談無料</p>
-          <p className="mt-1">お気軽にお問い合わせください</p>
-        </div>
       </div>
     </div>
   );

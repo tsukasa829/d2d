@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
 import { Menu, MoreVertical } from 'lucide-react';
+import AppHeader from '@/components/ui/AppHeader';
 import MessageBubble from './MessageBubble';
 import ChoiceButtons from './ChoiceButtons';
 import ImageMessage from './ImageMessage';
@@ -72,8 +73,8 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
 
   return (
     <div className="h-screen flex flex-col max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
-      {/* Header */}
-      <div className="bg-white/20 backdrop-blur-md border-b border-white/30 text-white px-4 py-4 shadow-lg">
+      {/* Header (shared) */}
+      <AppHeader>
         <div className="flex items-center justify-between">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
             <Menu className="w-6 h-6" />
@@ -83,7 +84,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
             <MoreVertical className="w-6 h-6" />
           </button>
         </div>
-      </div>
+      </AppHeader>
 
       {/* Chat Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">

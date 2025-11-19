@@ -1,5 +1,5 @@
 ---
-userAvatar: /avatars/doctorCat.png
+userAvatar: /avatars/evil.png
 defaultBot: doctor
 requireCorrect: true
 wrongMessage: "違います。もう一度選んでください。"
@@ -7,12 +7,21 @@ bots:
   doctor:
     displayName: ドクター猫
     avatar: /avatars/doctorCat.png
+  cry:
+    displayName: 悲しい猫
+    avatar: /avatars/cry.png
   other:
     displayName: 相手猫
     avatar: /avatars/doctorCat.png
 ---
 
 Bot(other): さっきの集合写真、君が写ってなかったにゃ…ごめんにゃ…
+
+Bot(doctor)[image]: /avatars/evil2.png
+
+Bot(cry)[image]: /avatars/cry.png
+
+Bot(cry): そんな思いをさせてたにゃ…ごめんにゃ…
 
 User:
 - x: まぁどうせ写り悪いにゃ
