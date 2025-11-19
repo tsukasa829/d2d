@@ -10,13 +10,13 @@ export default function Home() {
   const stage = user?.stage ?? 0;
 
   const days = [
-    { day: 1, title: "初回カウンセリング", completed: stage >= 1, path: "/chat/day1-confirm" },
-    { day: 2, title: "ストレス要因の特定", completed: stage >= 2, path: "/chat/day2" },
-    { day: 3, title: "対処法の検討", completed: stage >= 3, path: "/chat/day3" },
-    { day: 4, title: "実践とフィードバック", completed: stage >= 4, path: "/chat/day4" },
-    { day: 5, title: "進捗確認", completed: stage >= 5, path: "/chat/day5" },
-    { day: 6, title: "振り返りと調整", completed: stage >= 6, path: "/chat/day6" },
-    { day: 7, title: "総合評価", completed: stage >= 7, path: "/chat/day7" },
+    { day: 1, title: "初回カウンセリング", completed: stage >= 1, accessible: stage >= 0, path: "/chat/day1-confirm" },
+    { day: 2, title: "ストレス要因の特定", completed: stage >= 2, accessible: stage >= 1, path: "/chat/day2" },
+    { day: 3, title: "対処法の検討", completed: stage >= 3, accessible: stage >= 2, path: "/chat/day3" },
+    { day: 4, title: "実践とフィードバック", completed: stage >= 4, accessible: stage >= 3, path: "/chat/day4" },
+    { day: 5, title: "進捗確認", completed: stage >= 5, accessible: stage >= 4, path: "/chat/day5" },
+    { day: 6, title: "振り返りと調整", completed: stage >= 6, accessible: stage >= 5, path: "/chat/day6" },
+    { day: 7, title: "総合評価", completed: stage >= 7, accessible: stage >= 6, path: "/chat/day7" },
   ];
   const completedCount = days.filter((d) => d.completed).length;
 
@@ -44,8 +44,8 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="space-y-3">
           {days.map((day, index) => {
-            const currentDay = Math.floor(stage);
-            const isCurrentDay = day.day === currentDay && !day.completed;
+            const isActive = day.accessible && !day.completed;
+            const isLocked = !day.accessible;
             
             const DayCard = (
               <motion.div
@@ -54,9 +54,9 @@ export default function Home() {
                 transition={{ delay: index * 0.05 }}
                 className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${
                   day.completed 
-                    ? 'border-white/60 opacity-60 cursor-not-allowed'
-                    : isCurrentDay
-                    ? 'border-[#9333EA] hover:shadow-xl hover:bg-white/70 cursor-pointer'
+                    ? 'border-white/60 opacity-60 cursor-not-allowed' 
+                    : isLocked
+                    ? 'border-white/30 opacity-40 cursor-not-allowed'
                     : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
                 }`}
               >
@@ -64,11 +64,17 @@ export default function Home() {
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 shadow-lg ${
                     day.completed 
                       ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white' 
+                      : isLocked
+                      ? 'bg-white/40 text-gray-400'
                       : 'bg-white/60 text-[#9333EA]'
                   }`}>
                     {day.completed ? (
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : isLocked ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                     ) : (
                       <span>{day.day}</span>
@@ -76,15 +82,19 @@ export default function Home() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className={`${day.completed ? 'text-gray-500 line-through' : 'text-gray-800'}`}>Day {day.day}</h3>
+                      <h3 className={`${day.completed ? 'text-gray-500 line-through' : isLocked ? 'text-gray-400' : 'text-gray-800'}`}>
+                        Day {day.day}
+                      </h3>
                     </div>
-                    <p className={`${day.completed ? 'text-gray-500' : 'text-gray-700'}`}>{day.title}</p>
+                    <p className={`${day.completed ? 'text-gray-500' : isLocked ? 'text-gray-400' : 'text-gray-700'}`}>
+                      {day.title}
+                    </p>
                   </div>
                 </div>
               </motion.div>
             );
 
-            return day.completed ? (
+            return day.completed || isLocked ? (
               <div key={day.day}>{DayCard}</div>
             ) : (
               <Link key={day.day} href={day.path} className="block">
