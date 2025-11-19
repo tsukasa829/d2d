@@ -1,11 +1,10 @@
 "use client";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Building2, Stethoscope, User, Check, Sparkles } from 'lucide-react';
+import { Building2, Stethoscope, User, Check, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import PageHeader from '@/components/ui/PageHeader';
 
 export default function ServicePlansPage() {
-  const router = useRouter();
   const plans: Array<{
     id: string;
     name: string;
@@ -65,17 +64,7 @@ export default function ServicePlansPage() {
 
   return (
     <div className="min-h-screen max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
-      <div className="bg-white/20 backdrop-blur-md border-b border-white/30 text-white px-4 py-6 shadow-lg">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="tracking-wide">サービスプラン</h1>
-            <p className="text-white/90 text-sm mt-1">最適なプランをお選びください</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader title="サービスプラン" subtitle="最適なプランをお選びください" showBack />
 
       <div className="px-4 py-6 space-y-4">
         {plans.map((plan, index) => (

@@ -1,26 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, CalendarClock, Banknote } from "lucide-react";
+import { CreditCard, CalendarClock, Banknote } from "lucide-react";
+import PageHeader from "@/components/ui/PageHeader";
 
 export default function StandardPaymentPage() {
-  const router = useRouter();
   const paymentUrl = process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL;
 
   return (
     <div className="min-h-screen max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
-      {/* Header (base from standerd page) */}
-      <div className="bg-[#9333EA]/20 backdrop-blur-md border-b border-white/30 text-white px-4 py-6 shadow-lg">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="tracking-wide">お支払い方法の選択</h1>
-            <p className="text-white/90 text-sm mt-1">ご希望の方法をお選びください</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader title="お支払い方法の選択" subtitle="ご希望の方法をお選びください" showBack />
 
       <div className="px-4 py-6 space-y-4">
         <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border-2 border-white/60">

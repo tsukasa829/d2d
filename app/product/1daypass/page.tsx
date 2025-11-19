@@ -1,12 +1,11 @@
 "use client";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import PageHeader from '@/components/ui/PageHeader';
 // StripeのBuy Buttonは使用しないデザインに統一
 
 export default function OneDayPassPage() {
-  const router = useRouter();
   const paymentUrl = process.env.NEXT_PUBLIC_STRIPE_1DAYPASS_PAYMENT_URL;
   
   const [isAndroid, setIsAndroid] = useState(false);
@@ -20,17 +19,7 @@ export default function OneDayPassPage() {
 
   return (
     <div className="min-h-screen max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
-      <div className="bg-[#9333EA]/20 backdrop-blur-md border-b border-white/30 text-white px-4 py-6 shadow-lg">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="tracking-wide">1日体験パス</h1>
-            <p className="text-white/90 text-sm mt-1">まずは¥500で気軽にお試し</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader title="1日体験パス" subtitle="まずは¥500で気軽にお試し" showBack />
 
       <div className="px-4 py-6">
         <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border-2 border-white/60">
