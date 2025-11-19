@@ -89,6 +89,7 @@ export default function Home() {
             const isActive = day.accessible && !day.completed;
             const isLocked = !day.accessible;
             const isCurrentStage = day.day === Math.floor(stage); // 現在のステージ（最後に完了した日）
+            const isCountingDown = isCurrentStage && remainingSeconds !== null && remainingSeconds > 0;
             
             const DayCard = (
               <motion.div
@@ -100,6 +101,8 @@ export default function Home() {
                     ? 'border-white/60 opacity-60 cursor-not-allowed' 
                     : isLocked
                     ? 'border-white/30 opacity-40 cursor-not-allowed'
+                    : isCountingDown
+                    ? 'border-white/40 cursor-not-allowed'
                     : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
                 }`}
               >
@@ -115,6 +118,8 @@ export default function Home() {
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
+                    ) : isCountingDown ? (
+                      <Clock className="w-5 h-5" />
                     ) : (
                       <span>{day.day}</span>
                     )}
@@ -139,7 +144,7 @@ export default function Home() {
               </motion.div>
             );
 
-            return day.completed || isLocked ? (
+            return day.completed || isLocked || isCountingDown ? (
               <div key={day.day}>{DayCard}</div>
             ) : (
               <Link key={day.day} href={day.path} className="block">
