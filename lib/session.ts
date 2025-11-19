@@ -100,10 +100,13 @@ export async function updateSessionTrial(sessionId: string, trial: boolean): Pro
 
 export async function updateSessionStage(sessionId: string, stage: number): Promise<void> {
   const db = getDBClient();
-  await db.query(
-    `UPDATE sessions SET stage = $1, stageup_date = CURRENT_TIMESTAMP, last_access_at = CURRENT_TIMESTAMP WHERE session_id = $2`,
-    [stage, sessionId]
+  const now = new Date().toISOString();
+  console.log('[updateSessionStage] Updating stage to', stage, 'for session', sessionId, 'at', now);
+  const result = await db.query(
+    `UPDATE sessions SET stage = $1, stageup_date = $3, last_access_at = $3 WHERE session_id = $2`,
+    [stage, sessionId, now]
   );
+  console.log('[updateSessionStage] Update result:', result.rowCount, 'rows affected');
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {

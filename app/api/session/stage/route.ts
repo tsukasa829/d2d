@@ -31,25 +31,39 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('[API POST /session/stage] Request received');
+    const body = await request.json();
+    
     const cookieStore = await cookies();
-    const sessionId = cookieStore.get('sessionId')?.value;
+    const cookieSessionId = cookieStore.get('sessionId')?.value;
+    const bodySessionId = body.sessionId;
+    const sessionId = bodySessionId || cookieSessionId;
+    
+    console.log('[API POST /session/stage] SessionId from cookie:', cookieSessionId);
+    console.log('[API POST /session/stage] SessionId from body:', bodySessionId);
+    console.log('[API POST /session/stage] Using sessionId:', sessionId);
 
     if (!sessionId) {
-      return NextResponse.json({ error: 'sessionId not found in cookies' }, { status: 401 });
+      console.log('[API POST /session/stage] No sessionId found');
+      return NextResponse.json({ error: 'sessionId not found in cookies or body' }, { status: 401 });
     }
 
-    const body = await request.json();
     const stage = body.stage;
+    console.log('[API POST /session/stage] Requested stage:', stage, 'Type:', typeof stage);
 
     if (typeof stage !== 'number') {
+      console.log('[API POST /session/stage] Stage is not a number');
       return NextResponse.json({ error: 'stage must be a number' }, { status: 400 });
     }
 
+    console.log('[API POST /session/stage] Calling updateSessionStage');
     await updateSessionStage(sessionId, stage);
+    console.log('[API POST /session/stage] Getting updated user');
     const updated = await getSessionById(sessionId);
+    console.log('[API POST /session/stage] Success, returning user:', updated);
     return NextResponse.json({ success: true, user: updated });
   } catch (error) {
     console.error('[session/stage POST] Error:', error);
-    return NextResponse.json({ error: 'Failed to update stage' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update stage', details: String(error) }, { status: 500 });
   }
 }
