@@ -12,6 +12,7 @@ export default function AdminPage() {
   const { user: currentUser } = useSessionStore();
   const [editingStageId, setEditingStageId] = useState<string | null>(null);
   const [stageInput, setStageInput] = useState<string>('');
+  const [deletingAll, setDeletingAll] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -90,6 +91,32 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteAllOthers = async () => {
+    if (!currentUser) {
+      alert('ログインユーザーが見つかりません');
+      return;
+    }
+
+    const otherUsers = users.filter(u => u.sessionId !== currentUser.sessionId);
+    if (otherUsers.length === 0) {
+      alert('削除対象のユーザーがいません');
+      setDeletingAll(false);
+      return;
+    }
+
+    try {
+      await Promise.all(
+        otherUsers.map(u => fetch(`/api/admin/users/${u.sessionId}`, { method: 'DELETE' }))
+      );
+      setDeletingAll(false);
+      fetchUsers();
+    } catch (error) {
+      console.error('Failed to delete users:', error);
+      alert('削除に失敗しました');
+      setDeletingAll(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[100svh] bg-white flex items-center justify-center">
@@ -103,12 +130,37 @@ export default function AdminPage() {
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">ユーザー管理(Admin)</h1>
-          <button
-            onClick={fetchUsers}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            再読み込み
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={fetchUsers}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              再読み込み
+            </button>
+            {deletingAll ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDeleteAllOthers}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  確認：他ユーザー削除
+                </button>
+                <button
+                  onClick={() => setDeletingAll(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                >
+                  キャンセル
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setDeletingAll(true)}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                他ユーザー全削除
+              </button>
+            )}
+          </div>
         </div>
 
         {users.length === 0 ? (
