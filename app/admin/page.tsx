@@ -123,6 +123,7 @@ export default function AdminPage() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">セッションID</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">メール</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Stage</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">ステージ更新日時</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trial</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">1日パス</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Standard</th>
@@ -209,6 +210,9 @@ export default function AdminPage() {
                           >編集</button>
                         </div>
                       )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {user.stageupDate ? new Date(user.stageupDate).toLocaleString('ja-JP') : '未設定'}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <button

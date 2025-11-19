@@ -15,6 +15,10 @@ bots:
     avatar: /avatars/doctorCat.png
 ---
 
+
+Bot(doctor)[button]: 次へ進む | /stageup?nextStage=2
+
+
 Bot(other): さっきの集合写真、君が写ってなかったにゃ…ごめんにゃ…
 
 Bot(doctor)[image]: /avatars/evil2.png
