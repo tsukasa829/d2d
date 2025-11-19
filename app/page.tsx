@@ -75,12 +75,6 @@ export default function Home() {
 
         <div className="mt-8 space-y-3">
           <Link
-            href="/product/trial/success?sessionId=demo-user-id"
-            className="w-full px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2 font-semibold"
-          >
-            トライアル開始
-          </Link>
-          <Link
             href="/day2/waiting"
             className="w-full px-6 py-4 bg-white/60 backdrop-blur-md border border-white/60 text-[#9333EA] rounded-2xl hover:shadow-xl hover:bg-white/70 transition-all flex items-center justify-center gap-2"
           >

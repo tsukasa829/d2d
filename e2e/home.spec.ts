@@ -128,37 +128,4 @@ test('スタンダードプラン購入成功後に管理画面でスタンダ�
   await expect(standardButton).toHaveClass(/bg-blue-100/);
 });
 
-/**
- * トライアル開始後、管理画面でTrialが有効になることを確認
- * - /product/trial/success にアクセス（トライアル開始処理をトリガー）
- * - /admin にアクセス
- * - ハイライト行のTrial項目が「有効」になっていること
- */
-test('トライアル開始後に管理画面でTrialが有効になる', async ({ page }) => {
-  // まず / にアクセスしてセッション初期化
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  
-  // /product/trial/success にアクセス（トライアル開始処理）
-  await page.goto('/product/trial/success');
-  
-  // 処理完了まで待機（「トライアル開始完了」が表示されるまで）
-  await expect(page.getByText('トライアル開始完了')).toBeVisible({ timeout: 10000 });
-  
-  // /admin にアクセス
-  await page.goto('/admin');
-  
-  // ハイライトされた行を探す
-  const highlightedRow = page.locator('tr.bg-blue-50');
-  await expect(highlightedRow).toBeVisible();
-  
-  // ハイライト行内のTrial列（3列目）のボタンを取得
-  const trialButton = highlightedRow.locator('td').nth(2).locator('button');
-  await expect(trialButton).toBeVisible();
-  
-  // ボタンのテキストが「有効」であることを確認
-  await expect(trialButton).toHaveText('有効');
-  
-  // ボタンのスタイルが有効状態（bg-purple-100）であることを確認
-  await expect(trialButton).toHaveClass(/bg-purple-100/);
-});
+// トライアル機能は削除済みのため、関連E2Eテストも削除しました。
