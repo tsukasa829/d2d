@@ -1,13 +1,48 @@
 "use client";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Calendar } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { useSessionStore } from "@/lib/stores/sessionStore";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const { user } = useSessionStore();
   const stage = user?.stage ?? 0;
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
+
+  // カウントダウン計算
+  useEffect(() => {
+    if (!user?.stageupDate) {
+      setRemainingSeconds(null);
+      return;
+    }
+
+    const calculateRemaining = () => {
+      if (!user.stageupDate) return;
+      
+      const stageupTime = new Date(user.stageupDate).getTime();
+      const oneHourLater = stageupTime + 60 * 60 * 1000; // 1時間後
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((oneHourLater - now) / 1000));
+      
+      if (remaining === 0) {
+        setRemainingSeconds(null);
+      } else {
+        setRemainingSeconds(remaining);
+      }
+    };
+
+    calculateRemaining();
+    const interval = setInterval(calculateRemaining, 1000);
+    return () => clearInterval(interval);
+  }, [user?.stageupDate]);
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const days = [
     { day: 1, title: "初回カウンセリング", completed: stage >= 1, accessible: stage >= 0, path: "/chat/day1-confirm" },
@@ -85,6 +120,12 @@ export default function Home() {
                     <p className={`${day.completed ? 'text-gray-500' : isLocked ? 'text-gray-400' : 'text-gray-700'}`}>
                       {day.title}
                     </p>
+                    {isActive && remainingSeconds !== null && remainingSeconds > 0 && (
+                      <div className="mt-2 flex items-center gap-2 text-sm text-[#9333EA]">
+                        <Clock className="w-4 h-4" />
+                        <span>{formatTime(remainingSeconds)} で開始可能</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
