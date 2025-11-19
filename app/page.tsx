@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Calendar } from "lucide-react";
-import AppHeader from "@/components/ui/AppHeader";
+import PageHeader from "@/components/ui/PageHeader";
 
 export default function Home() {
   const days = [
@@ -19,11 +19,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
       {/* Header (shared) */}
-      <AppHeader>
-        <div className="text-center">
-          <div className="tracking-wide text-xl font-bold">D2D</div>
-          <div className="mt-1 text-sm">あなたを変える７日間プログラム</div>
-        </div>
+      <PageHeader title="D2D" subtitle="あなたを変える７日間プログラム">
         <div className="space-y-2 mt-4">
           <div className="flex items-center justify-between text-sm">
             <span>進捗状況</span>
@@ -38,7 +34,7 @@ export default function Home() {
             />
           </div>
         </div>
-      </AppHeader>
+      </PageHeader>
 
       {/* Day List */}
       <div className="flex-1 overflow-y-auto px-4 py-6">

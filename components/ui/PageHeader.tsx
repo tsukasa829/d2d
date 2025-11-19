@@ -9,12 +9,14 @@ export default function PageHeader({
   showBack = false,
   onBack,
   right,
+  children,
 }: {
   title: string;
   subtitle?: string;
   showBack?: boolean;
   onBack?: () => void;
   right?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const router = useRouter();
   const handleBack = () => {
@@ -30,12 +32,13 @@ export default function PageHeader({
             <ArrowLeft className="w-6 h-6" />
           </button>
         )}
-        <div>
+        <div className="flex-1">
           <h1 className="tracking-wide">{title}</h1>
           {subtitle && <p className="text-white/90 text-sm mt-1">{subtitle}</p>}
         </div>
         {right && <div className="ml-auto">{right}</div>}
       </div>
+      {children}
     </AppHeader>
   );
 }
