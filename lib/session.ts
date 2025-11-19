@@ -46,23 +46,27 @@ export async function getSessionById(sessionId: string): Promise<User | null> {
 
 export async function createSession(sessionId: string): Promise<User> {
   const db = getDBClient();
+  // 日本時間（JST = UTC+9）で作成
   const now = new Date();
+  const jstOffset = 9 * 60 * 60 * 1000;
+  const jstDate = new Date(now.getTime() + jstOffset);
+  const jstString = jstDate.toISOString().replace('Z', '+09:00');
   await db.query(
     `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, stage, created_at, last_access_at)
      VALUES ($1, NULL, FALSE, FALSE, FALSE, 0, $2, $3)
      ON CONFLICT (session_id) DO NOTHING`,
-    [sessionId, now, now]
+    [sessionId, jstString, jstString]
   );
   return {
     sessionId,
-    email: null,
+    email: '',
     trial: false,
     has1DayPass: false,
     hasStandard: false,
     stage: 0,
     stageupDate: null,
-    createdAt: now,
-    lastAccessAt: now,
+    createdAt: jstDate,
+    lastAccessAt: jstDate,
   };
 }
 
@@ -100,11 +104,15 @@ export async function updateSessionTrial(sessionId: string, trial: boolean): Pro
 
 export async function updateSessionStage(sessionId: string, stage: number): Promise<void> {
   const db = getDBClient();
-  const now = new Date().toISOString();
-  console.log('[updateSessionStage] Updating stage to', stage, 'for session', sessionId, 'at', now);
+  // 日本時間（JST = UTC+9）で保存
+  const now = new Date();
+  const jstOffset = 9 * 60 * 60 * 1000; // 9時間のミリ秒
+  const jstDate = new Date(now.getTime() + jstOffset);
+  const jstString = jstDate.toISOString().replace('Z', '+09:00');
+  console.log('[updateSessionStage] Updating stage to', stage, 'for session', sessionId, 'at JST:', jstString);
   const result = await db.query(
     `UPDATE sessions SET stage = $1, stageup_date = $3, last_access_at = $3 WHERE session_id = $2`,
-    [stage, sessionId, now]
+    [stage, sessionId, jstString]
   );
   console.log('[updateSessionStage] Update result:', result.rowCount, 'rows affected');
 }
