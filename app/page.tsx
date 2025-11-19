@@ -3,16 +3,20 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Calendar } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
+import { useSessionStore } from "@/lib/stores/sessionStore";
 
 export default function Home() {
+  const { user } = useSessionStore();
+  const stage = user?.stage ?? 0;
+
   const days = [
-    { day: 1, title: "初回カウンセリング", completed: true, path: "/chat/day1-confirm" },
-    { day: 2, title: "ストレス要因の特定", completed: false, path: "/chat/day2" },
-    { day: 3, title: "対処法の検討", completed: false, path: "/chat/day3" },
-    { day: 4, title: "実践とフィードバック", completed: false, path: "/chat/day4" },
-    { day: 5, title: "進捗確認", completed: false, path: "/chat/day5" },
-    { day: 6, title: "振り返りと調整", completed: false, path: "/chat/day6" },
-    { day: 7, title: "総合評価", completed: false, path: "/chat/day7" },
+    { day: 1, title: "初回カウンセリング", completed: stage >= 1, path: "/chat/day1-confirm" },
+    { day: 2, title: "ストレス要因の特定", completed: stage >= 2, path: "/chat/day2" },
+    { day: 3, title: "対処法の検討", completed: stage >= 3, path: "/chat/day3" },
+    { day: 4, title: "実践とフィードバック", completed: stage >= 4, path: "/chat/day4" },
+    { day: 5, title: "進捗確認", completed: stage >= 5, path: "/chat/day5" },
+    { day: 6, title: "振り返りと調整", completed: stage >= 6, path: "/chat/day6" },
+    { day: 7, title: "総合評価", completed: stage >= 7, path: "/chat/day7" },
   ];
   const completedCount = days.filter((d) => d.completed).length;
 
@@ -39,14 +43,16 @@ export default function Home() {
       {/* Day List */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="space-y-3">
-          {days.map((day, index) => (
-            <Link key={day.day} href={day.path} className="block">
+          {days.map((day, index) => {
+            const DayCard = (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all hover:shadow-xl hover:bg-white/70 ${
-                  day.completed ? 'border-white/60' : 'border-white/40'
+                className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${
+                  day.completed 
+                    ? 'border-white/60 opacity-60 cursor-not-allowed' 
+                    : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
                 }`}
               >
                 <div className="p-5 flex items-center gap-4">
@@ -55,7 +61,13 @@ export default function Home() {
                       ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white' 
                       : 'bg-white/60 text-[#9333EA]'
                   }`}>
-                    <span>{day.day}</span>
+                    {day.completed ? (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <span>{day.day}</span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -65,8 +77,16 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
-            </Link>
-          ))}
+            );
+
+            return day.completed ? (
+              <div key={day.day}>{DayCard}</div>
+            ) : (
+              <Link key={day.day} href={day.path} className="block">
+                {DayCard}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="mt-8 space-y-3">
