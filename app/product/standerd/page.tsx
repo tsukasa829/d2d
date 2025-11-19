@@ -126,7 +126,7 @@ export default function ServicePlansPage() {
 
                 <div className="flex justify-center">
                   <Link
-                    href={process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL || '/product/1daypass'}
+                    href={plan.id === 'personal' ? '/product/standerd/payment' : (process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL || '/product/1daypass')}
                     className={`mt-6 px-8 py-3 rounded-xl transition-all backdrop-blur-md border shadow-lg ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[#9333EA]/80 to-[#B794F6]/80 text-white hover:shadow-xl hover:scale-[1.02] border-white/40'
