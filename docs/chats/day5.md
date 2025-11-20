@@ -2,7 +2,7 @@
 userAvatar: /avatars/angry.png
 defaultBot: other
 requireCorrect: true
-wrongMessage: "その怒りを抑え込まなくていいにゃ。もう一度、本当の気持ちを選んでにゃ。"
+wrongMessage: "猫の気持ちになって、選んでみてください"
 bots:
   other:
     displayName: 相手猫

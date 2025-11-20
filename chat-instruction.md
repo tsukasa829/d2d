@@ -63,7 +63,7 @@
 userAvatar: /avatars/sad.png         # テーマに応じたアバター
 defaultBot: other                     # 相手役の猫をデフォルトに
 requireCorrect: true                  # 正解を選ぶまで進めない
-wrongMessage: "その気持ちを抑えなくていいにゃ。もう一度、本当の気持ちを選んでにゃ。"
+wrongMessage: "猫の気持ちになって、選んでみてください"
 bots:
   other:
     displayName: 相手猫
@@ -134,8 +134,12 @@ Bot(teacher)[button]: 次へ進む | /stageup?nextStage=2
 
 5. **Front Matter の設定**
    - `requireCorrect: true` を必ず設定
-   - `wrongMessage` で優しく再選択を促す
+   - `wrongMessage: "猫の気持ちになって、選んでみてください"` を使用
    - アバター画像をテーマに合わせる
+
+6. **語尾について**
+   - 語尾に「にゃ」をつける必要はありません
+   - 自然な日本語で記述してください
 
 ## ファイル名規則
 
@@ -157,7 +161,7 @@ docs/chats/day3.md
 userAvatar: /avatars/sad.png
 defaultBot: other
 requireCorrect: true
-wrongMessage: "その気持ちを抑えなくていいにゃ。もう一度、本当の気持ちを選んでにゃ。"
+wrongMessage: "猫の気持ちになって、選んでみてください"
 bots:
   other:
     displayName: 相手猫
