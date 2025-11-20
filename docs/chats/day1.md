@@ -38,7 +38,7 @@ User [avatar=none]:
 <!-- セット1 -->
 Bot(other): さっきの集合写真、君が写ってなかった…ごめん…
 
-User [avatar=default]:
+User:
 - x: まぁどうせ写り悪いよ
 - x: 気にしてないよ
 - o: みんなと写りたかったから…悲しかった
