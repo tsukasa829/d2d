@@ -1,5 +1,5 @@
 ---
-userAvatar: /avatars/evil.png
+userAvatar: /avatars/cry.png
 defaultBot: other
 requireCorrect: true
 wrongMessage: "猫の気持ちになって、選んでみてください"
