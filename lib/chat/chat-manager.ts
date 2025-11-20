@@ -68,19 +68,20 @@ export class ChatManager {
     const isCorrect = selected?.correct === true || !requireCorrect;
 
     if (!isCorrect) {
-      // 不正解: 進行を止めて、その場でフィードバックを表示（defaultBot が話す）
+      // 不正解: 進行を止めて、その場でフィードバックを表示（teacher が話す）
       const feedback = selected?.wrongMessage || this.script.wrongMessage || '違います。もう一度選んでください。';
-      const defaultBotId = this.script.defaultBot;
-      const avatar = defaultBotId && this.script.bots && this.script.bots[defaultBotId]
-        ? this.script.bots[defaultBotId].avatar
-        : (this.script.botAvatar || '/avatars/bot.png');
+      
+      // wrongMessageは常にteacher(ねこ先生)が発言する
+      const teacherAvatar = this.script.bots && this.script.bots['teacher']
+        ? this.script.bots['teacher'].avatar
+        : '/avatars/teacherCat.png';
 
       this.messages.push({
         id: `m-${Date.now()}-b-${this.seq++}`,
         type: 'bot',
         content: feedback,
         timestamp: new Date(),
-        avatar,
+        avatar: teacherAvatar,
       });
       // index は据え置き、タイマーは張らない
       return;
