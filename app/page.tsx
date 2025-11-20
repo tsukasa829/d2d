@@ -65,7 +65,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
       {/* Header (shared) */}
-      <PageHeader title="D2D" subtitle="あなたを変える７日間プログラム">
+      <PageHeader title="D2D" subtitle="本当のあなたに出会う７Dayプログラム">
         <div className="space-y-2 mt-4">
           <div className="flex items-center justify-between text-sm">
             <span>進捗状況</span>
