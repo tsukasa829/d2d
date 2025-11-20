@@ -12,6 +12,11 @@ bots:
     avatar: /avatars/teacherCat.png
 ---
 
+<!-- プロフィール紹介 -->
+Bot(teacher): ![怒り猫](/avatars/angry.png)
+
+Bot(teacher): この子は怒り猫。怒るのが大好きな子です。猫の世界では、どんな感情も許されます。もちろん、怒りもOKです。怒り猫になったつもりで、会話してみましょう!
+
 <!-- セット1 -->
 Bot(other): 君の意見、会議で全部却下されちゃった…
 
