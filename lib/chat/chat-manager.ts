@@ -76,14 +76,21 @@ export class ChatManager {
         ? this.script.bots['teacher'].avatar
         : '/avatars/teacherCat.png';
 
-      this.messages.push({
-        id: `m-${Date.now()}-b-${this.seq++}`,
-        type: 'bot',
-        content: feedback,
-        timestamp: new Date(),
-        avatar: teacherAvatar,
-      });
-      // index は据え置き、タイマーは張らない
+      // 遅延してwrongMessageを表示
+      this.clearTimers();
+      const shortDelay = Number(process.env.NEXT_PUBLIC_BOT_MESSAGE_DELAY ?? '1') * 1000;
+      const t = setTimeout(() => {
+        this.messages.push({
+          id: `m-${Date.now()}-b-${this.seq++}`,
+          type: 'bot',
+          content: feedback,
+          timestamp: new Date(),
+          avatar: teacherAvatar,
+        });
+      }, shortDelay);
+      this.timers.push(t);
+      
+      // index は据え置き
       return;
     }
 
