@@ -17,10 +17,8 @@ Bot(teacher): ようこそ、D2Dへ。私はねこ先生です。
 
 Bot(teacher): これから7日間、あなたは様々な感情を持つ猫になりきって、会話を楽しみます。この世界では、どんな感情も許されます。リラックスして会話してみてください。
 
-User[avatar]: /avatars/defaultUser.png
-User:
+User [avatar=none]:
 - o: わかった！
-
 
 Bot(teacher): まず最初に演じてもらう猫は、
 
@@ -29,20 +27,18 @@ Bot(teacher)[image]: /avatars/cry.png
 
 Bot(teacher): この子は悲しみ猫、シズク。悲しむのが大好きな子です。猫の世界では、どんな感情も許されます。もちろん、悲しみもOKです。悲しみ猫シズクになったつもりで、会話してみましょう!
 
-User[avatar]: /avatars/defaultUser.png
-User:
+User [avatar=none]:
 - o: OK！
 
 Bot(teacher): これから相手役の猫が悲しみ猫に話しかけます。そうしたらあなたは悲しみ猫になりきって返事を選んでください。
 
-User[avatar]: /avatars/defaultUser.png
-User:
+User [avatar=none]:
 - o: はじめる
 
 <!-- セット1 -->
 Bot(other): さっきの集合写真、君が写ってなかった…ごめん…
 
-User:
+User [avatar=default]:
 - x: まぁどうせ写り悪いよ
 - x: 気にしてないよ
 - o: みんなと写りたかったから…悲しかった
