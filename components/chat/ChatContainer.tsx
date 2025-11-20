@@ -10,6 +10,7 @@ import NavigationButtons from './NavigationButtons';
 import { ChatManager } from '@/lib/chat/chat-manager';
 import { parseScript } from '@/lib/chat/script-parser';
 import { Message } from '@/lib/types/chat';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -87,10 +88,11 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
       </AppHeader>
 
       {/* Chat Messages */}
+      {loading ? (
+        <LoadingScreen />
+      ) : (
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {loading ? (
-          <div className="text-center text-white drop-shadow-lg">読み込み中...</div>
-        ) : (
+        {
           messages.map((m, index) => {
             // 画像メッセージ
             if (m.imageUrl) {
@@ -107,13 +109,16 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
             // 通常テキストメッセージ
             return <MessageBubble key={m.id} message={m} index={index} />;
           })
-        )}
+        }
       </div>
+      )}
 
       {/* Input Area with Choice Buttons */}
-      <div className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
-        <ChoiceButtons choices={choices} onSelect={handleSelect} />
-      </div>
+      {!loading && (
+        <div className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
+          <ChoiceButtons choices={choices} onSelect={handleSelect} />
+        </div>
+      )}
     </div>
   );
 }

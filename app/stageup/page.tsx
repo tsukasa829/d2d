@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSessionStore } from "@/lib/stores/sessionStore";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 export default function StageUpPage() {
   const router = useRouter();
@@ -65,12 +66,5 @@ export default function StageUpPage() {
     updateUserStage();
   }, [searchParams, user, updateStage, router]);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#B794F6]/20 via-[#9333EA]/20 to-[#7E22CE]/20 flex items-center justify-center p-4">
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 border-white/40 p-8 max-w-md w-full text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9333EA] mx-auto mb-4"></div>
-        <p className="text-gray-700">読み込み中...</p>
-      </div>
-    </div>
-  );
+  return <LoadingScreen />;
 }
