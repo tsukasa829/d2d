@@ -103,12 +103,8 @@ export class ChatManager {
         if (url === 'default') {
           this.script.userAvatar = this.defaultUserAvatar;
         }
-        // 'hidden' または 'none' でアバターを非表示
-        else if (url === 'hidden' || url === 'none') {
-          this.script.userAvatar = '';
-        }
-        // defaultUser.png が指定された場合もアバターを非表示（後方互換性）
-        else if (url.includes('defaultUser.png')) {
+        // 'none' でアバターを非表示
+        else if (url === 'none') {
           this.script.userAvatar = '';
         }
         // その他のパスはそのまま設定
