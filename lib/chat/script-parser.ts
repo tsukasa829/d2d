@@ -123,6 +123,56 @@ export function parseScript(markdown: string): ChatScript {
       continue;
     }
 
+    // User [avatar=...]: (新形式)
+    const mUserWithAvatar = line.match(/^User\s+\[avatar=([^\]]+)\]:\s*$/);
+    if (mUserWithAvatar) {
+      const [, avatarSpec] = mUserWithAvatar;
+      const choices: Choice[] = [];
+      i++;
+      while (i < lines.length) {
+        const l = lines[i].trim();
+        if (!l) { i++; continue; }
+        if (l.startsWith('- ')) {
+          const raw = l.replace(/^-\s+/, '');
+          // 新形式: o:/x: 記法の解釈
+          const oxMatch = raw.match(/^(o|x):\s*(.+)$/);
+          if (oxMatch) {
+            const kind = oxMatch[1];
+            const rest = oxMatch[2];
+            const [labelPart, wrongMsgPart] = rest.split('|').map(s => s?.trim());
+            const c: Choice = {
+              label: labelPart,
+              value: labelPart,
+              correct: kind === 'o',
+            };
+            if (kind === 'x' && wrongMsgPart) c.wrongMessage = wrongMsgPart;
+            choices.push(c);
+            i++;
+            continue;
+          }
+
+          // 旧形式: 全角括弧の（正解）/（外れ）を含む場合に解釈
+          let label = raw;
+          let correct: boolean | undefined = undefined;
+          if (/（正解）/.test(label)) {
+            label = label.replace(/（正解）/g, '').trim();
+            correct = true;
+          } else if (/（外れ）/.test(label)) {
+            label = label.replace(/（外れ）/g, '').trim();
+            correct = false;
+          }
+          const c: Choice = { label, value: label };
+          if (typeof correct === 'boolean') c.correct = correct;
+          choices.push(c);
+          i++;
+          continue;
+        }
+        break;
+      }
+      nodes.push({ type: 'user', content: '', choices, avatarUrl: avatarSpec.trim() });
+      continue;
+    }
+
     if (line.startsWith('User:')) {
       // 次行以降の箇条書きを choices として収集
       const choices: Choice[] = [];

@@ -41,13 +41,26 @@ export class ChatManager {
     // 現在の選択肢から選択内容を特定
     const selected = node.choices?.find(c => c.value === choice || c.label === choice);
 
+    // アバターの決定: nodeにavatarUrlがあればそれを使用
+    let userAvatar = this.script.userAvatar;
+    if (node.avatarUrl) {
+      const avatarSpec = node.avatarUrl.trim();
+      if (avatarSpec === 'default') {
+        userAvatar = this.defaultUserAvatar;
+      } else if (avatarSpec === 'none') {
+        userAvatar = '';
+      } else {
+        userAvatar = avatarSpec;
+      }
+    }
+
     // ユーザーメッセージを追加
     this.messages.push({
       id: `m-${Date.now()}-u-${this.seq++}`,
       type: 'user',
       content: choice,
       timestamp: new Date(),
-      avatar: this.script.userAvatar,
+      avatar: userAvatar,
     });
     this.lastAnswer = choice;
 
