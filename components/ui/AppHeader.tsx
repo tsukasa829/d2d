@@ -10,7 +10,7 @@ export default function AppHeader({
   return (
     <div
       className={clsx(
-        'bg-white/5 backdrop-blur-xl text-white px-4 py-6 shadow-xl border-b border-white/10',
+        'bg-[#9333EA]/40 backdrop-blur-md text-white px-4 py-6 shadow-lg border-b border-white/30',
         className
       )}
     >
