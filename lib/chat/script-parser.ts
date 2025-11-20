@@ -114,6 +114,15 @@ export function parseScript(markdown: string): ChatScript {
       continue;
     }
 
+    // User[avatar]:
+    const mUserAvatar = line.match(/^User\[avatar\]:\s*(.+)$/);
+    if (mUserAvatar) {
+      const [, url] = mUserAvatar;
+      nodes.push({ type: 'user-avatar', content: '', avatarUrl: url.trim() });
+      i++;
+      continue;
+    }
+
     if (line.startsWith('User:')) {
       // 次行以降の箇条書きを choices として収集
       const choices: Choice[] = [];

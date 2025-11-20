@@ -23,7 +23,7 @@ export interface NavigationButton {
 }
 
 export interface ScriptNode {
-  type: 'bot' | 'user';
+  type: 'bot' | 'user' | 'user-avatar';
   content: string;
   choices?: Choice[];
   imageUrl?: string;
@@ -31,6 +31,7 @@ export interface ScriptNode {
   buttonUrl?: string;
   buttons?: NavigationButton[];
   speakerId?: string; // 複数Bot対応: 話者ID
+  avatarUrl?: string; // User[avatar]用
 }
 
 export interface ChatScript {

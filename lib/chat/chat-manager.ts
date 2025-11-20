@@ -92,6 +92,19 @@ export class ChatManager {
     let accDelay = 0;
     while (this.index < this.script.nodes.length) {
       const node: ScriptNode = this.script.nodes[this.index];
+      
+      // User[avatar]: ノードの処理 - ユーザーアバターを更新
+      if (node.type === 'user-avatar' && node.avatarUrl) {
+        // defaultUser.png が指定された場合はアバターを非表示にする
+        if (node.avatarUrl.includes('defaultUser.png')) {
+          this.script.userAvatar = '';
+        } else {
+          this.script.userAvatar = node.avatarUrl;
+        }
+        this.index++;
+        continue;
+      }
+      
       if (node.type === 'bot') {
         const fullText = this.interpolate(node.content);
         const getAvatarFor = (n: ScriptNode) => {
