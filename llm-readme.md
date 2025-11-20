@@ -266,6 +266,529 @@ if (sessionStorage.getItem(completedKey) === '1') {
 
 ---
 
+## チャットスクリプト仕様 (`docs/chats/dayX.md`)
+
+### 概要
+
+各Dayのチャットセッションは、Markdown形式のスクリプトファイル (`docs/chats/day1.md` ~ `day7.md`) で定義されます。このスクリプトは `lib/chat/script-parser.ts` によってパースされ、`ChatManager` が会話フローを制御します。
+
+### ファイル構造
+
+```markdown
+---
+userAvatar: /avatars/evil.png
+defaultBot: doctor
+requireCorrect: true
+wrongMessage: "違います。もう一度選んでください。"
+bots:
+  doctor:
+    displayName: ドクター猫
+    avatar: /avatars/doctorCat.png
+  cry:
+    displayName: 悲しい猫
+    avatar: /avatars/cry.png
+---
+
+Bot(doctor): こんにちは！
+
+User:
+- o: 正解の選択肢
+- x: 不正解の選択肢1
+- x: 不正解の選択肢2
+
+Bot(doctor): 次のメッセージ
+```
+
+### Front Matter (YAML)
+
+スクリプトファイルの先頭に `---` で囲まれた YAML 形式のメタデータを記述します。
+
+**利用可能なフィールド:**
+
+#### `userAvatar` (string)
+- ユーザーメッセージに表示されるアバター画像のパス
+- 例: `/avatars/evil.png`
+
+#### `defaultBot` (string)
+- デフォルトで発言するBotのID
+- `Bot()` や `Bot(doctor)` のように、話者を指定しない場合に使用される
+- 例: `doctor`
+
+#### `requireCorrect` (boolean)
+- `true`: 正解を選ぶまで先に進めない（不正解時にフィードバックを表示）
+- `false`: 正誤判定なし、どの選択肢でも進行
+- デフォルト: `false`
+
+#### `wrongMessage` (string)
+- `requireCorrect: true` の時、不正解を選んだ際に表示されるメッセージ
+- 各選択肢に個別の `wrongMessage` がある場合はそちらが優先される
+- 例: `"違います。もう一度選んでください。"`
+
+#### `bots` (object)
+- 複数のBot（キャラクター）を定義するオブジェクト
+- 各BotはIDをキーとし、`displayName` と `avatar` を持つ
+- 例:
+  ```yaml
+  bots:
+    doctor:
+      displayName: ドクター猫
+      avatar: /avatars/doctorCat.png
+    cry:
+      displayName: 悲しい猫
+      avatar: /avatars/cry.png
+  ```
+
+### メッセージ記法
+
+#### Botメッセージ
+
+**基本形式:**
+```markdown
+Bot(botId): メッセージ内容
+```
+
+**省略形:**
+```markdown
+Bot: メッセージ内容
+```
+- `botId` を省略すると `defaultBot` が使用される
+
+**画像表示:**
+```markdown
+Bot(doctor)[image]: /avatars/evil2.png
+```
+- `[image]` を付けると画像メッセージとして表示
+- `content` に画像パスを記述
+
+**ボタン付きメッセージ:**
+```markdown
+Bot(doctor)[button]: 次へ進む | /stageup?nextStage=2
+```
+- `[button]` でボタンを表示
+- フォーマット: `ラベル | URL`
+
+**複数ボタン:**
+```markdown
+Bot(doctor)[buttons]: 選択肢A | /path/a || 選択肢B | /path/b
+```
+- `[buttons]` で複数ボタンを表示
+- フォーマット: `ラベル1 | URL1 || ラベル2 | URL2`
+
+#### Userメッセージ（選択肢）
+
+```markdown
+User:
+- o: 正解の選択肢
+- x: 不正解の選択肢1
+- x: 不正解の選択肢2
+```
+
+**選択肢の形式:**
+- `o:` - 正解マーク（`requireCorrect: true` の場合のみ意味を持つ）
+- `x:` - 不正解マーク
+- マークなし（`-`のみ）- 正誤判定なし
+
+**個別の不正解メッセージ:**
+```markdown
+User:
+- x: 間違った答え | "この答えは違うよ"
+- o: 正しい答え
+```
+- `|` の後に不正解時のメッセージを記述可能
+- グローバルの `wrongMessage` より優先される
+
+### 変数展開
+
+スクリプト内で `{{変数名}}` を使用すると、ユーザーの前回の回答を埋め込めます。
+
+```markdown
+Bot: あなたは「{{lastAnswer}}」を選びましたね。
+```
+
+- `{{lastAnswer}}`: 直前のUserの選択内容
+
+### 実行フロー
+
+1. **初期化** (`ChatManager.initialize()`)
+   - スクリプトを先頭から読み込み
+   - 最初の連続するBotメッセージをすべて即座に表示
+   - 最初の `User:` ノードで停止し、選択肢を表示
+
+2. **選択肢のクリック** (`handleUserChoice(value)`)
+   - ユーザーメッセージを追加
+   - `requireCorrect: true` の場合:
+     - 正解 (`o:`) を選択 → 次のノードへ進む
+     - 不正解 (`x:`) を選択 → `wrongMessage` を表示し、同じ選択肢を再表示
+   - `requireCorrect: false` の場合:
+     - どの選択肢を選んでも次へ進む
+
+3. **Botメッセージの遅延表示**
+   - 選択後、連続するBotメッセージを `NEXT_PUBLIC_BOT_MESSAGE_DELAY` 秒ごとに表示
+   - デフォルト: 1秒
+   - 環境変数で変更可能: `NEXT_PUBLIC_BOT_MESSAGE_DELAY=2` → 2秒間隔
+
+4. **終了**
+   - すべてのノードを処理し終えたら、選択肢を非表示にして終了
+
+### パーサー仕様 (`lib/chat/script-parser.ts`)
+
+**入力:** Markdown形式のスクリプトテキスト
+
+**出力:** `ChatScript` オブジェクト
+```typescript
+interface ChatScript {
+  userAvatar?: string;
+  botAvatar?: string;
+  defaultBot?: string;
+  requireCorrect?: boolean;
+  wrongMessage?: string;
+  bots?: Record<string, { displayName: string; avatar: string }>;
+  nodes: ScriptNode[];
+}
+
+interface ScriptNode {
+  type: 'bot' | 'user';
+  content: string;
+  speakerId?: string;        // Bot話者ID
+  imageUrl?: string;         // [image]の場合
+  buttonLabel?: string;      // [button]の場合
+  buttonUrl?: string;
+  buttons?: Array<{ label: string; url: string }>;  // [buttons]の場合
+  choices?: Array<{          // User選択肢
+    label: string;
+    value: string;
+    correct?: boolean;       // o: の場合 true
+    wrongMessage?: string;   // 個別の不正解メッセージ
+  }>;
+}
+```
+
+**処理の流れ:**
+1. Front Matter (YAML) を `gray-matter` でパース
+2. 残りのMarkdownを行ごとに処理
+3. `Bot(...)` で始まる行 → Botノード
+4. `User:` で始まる行 → Userノード開始、次の行から選択肢を収集
+5. 変数 `{{lastAnswer}}` は `ChatManager` が実行時に展開
+
+### スクリプト作成のベストプラクティス
+
+1. **Front Matter を必ず記述**
+   - `defaultBot` を設定すると、`Bot()` で話者を省略できる
+   - `requireCorrect: true` で学習効果を高められる
+
+2. **選択肢は3つ程度に**
+   - 多すぎると画面に収まらない
+   - 正解1つ、不正解2つが標準的
+
+3. **遅延を活用**
+   - 連続するBotメッセージは自動的に遅延表示される
+   - 長文は複数行に分割すると読みやすい
+
+4. **画像・ボタンを効果的に**
+   - 画像はシーンの変化を表現
+   - ボタンはステージ進行やリダイレクトに使用
+
+5. **変数展開で文脈を保つ**
+   - `{{lastAnswer}}` で前の回答を参照すると、会話が自然になる
+
+### サンプルスクリプト
+
+```markdown
+---
+userAvatar: /avatars/user.png
+defaultBot: therapist
+requireCorrect: true
+wrongMessage: "もう一度考えてみましょう。"
+bots:
+  therapist:
+    displayName: セラピスト
+    avatar: /avatars/therapist.png
+  patient:
+    displayName: 患者
+    avatar: /avatars/patient.png
+---
+
+Bot(therapist): こんにちは。今日の調子はいかがですか？
+
+User:
+- o: 少し疲れています
+- o: まあまあです
+- o: 元気です
+
+Bot(therapist): 「{{lastAnswer}}」と感じているのですね。
+Bot(therapist): その気持ちについて、もう少し詳しく教えてください。
+
+Bot(patient)[image]: /avatars/thinking.png
+
+User:
+- x: 話したくありません | "無理に話す必要はありませんが、少しずつでも大丈夫ですよ。"
+- o: 最近、仕事が忙しくて...
+- o: 人間関係で悩んでいます
+
+Bot(therapist): なるほど、そうだったんですね。
+Bot(therapist)[button]: 次のステップへ | /stageup?nextStage=2
+```
+
+---
+
+## State管理の詳細仕様 (Zustand)
+
+### Zustandストア構造
+
+`lib/stores/sessionStore.ts` がアプリケーション全体のユーザー状態を管理します。
+
+**ストア定義:**
+```typescript
+interface SessionStore {
+  user: User | null;
+  setUser: (user: User) => void;
+  clearUser: () => void;
+  updateEmail: (email: string) => void;
+  updateStage: (stage: number) => void;
+  toggleTrial: () => void;
+  grant1DayPass: () => void;
+  grantStandard: () => void;
+}
+```
+
+**User型:**
+```typescript
+interface User {
+  sessionId: string;         // 一意なセッションID (UUID)
+  email: string;             // メールアドレス
+  trial: boolean;            // トライアルフラグ
+  has1DayPass: boolean;      // 1日パスフラグ
+  hasStandard: boolean;      // スタンダードプランフラグ
+  stage: number;             // 現在のステージ (0 ~ 7)
+  stageupDate: Date | null;  // 最後のステージアップ日時 (JST)
+  createdAt: Date;           // 作成日時
+  lastAccessAt: Date;        // 最終アクセス日時
+}
+```
+
+### 永続化 (Zustand Persist)
+
+**設定:**
+```typescript
+export const useSessionStore = create<SessionStore>()(
+  persist(
+    (set) => ({ /* state and actions */ }),
+    {
+      name: 'session-storage',  // localStorage key
+    }
+  )
+);
+```
+
+**保存先:** `localStorage['session-storage']`
+
+**保存内容:**
+```json
+{
+  "state": {
+    "user": {
+      "sessionId": "uuid-here",
+      "email": "user@example.com",
+      "stage": 3,
+      "stageupDate": "2025-11-21T10:30:00+09:00",
+      ...
+    }
+  },
+  "version": 0
+}
+```
+
+**重要な注意点:**
+- ブラウザの localStorage に保存されるため、**クライアント側でのみ利用可能**
+- サーバー側 (API Routes) では使えない → DB から直接取得する
+- `Date` オブジェクトは JSON シリアライズ時に文字列になるため、読み込み時に `new Date()` で変換が必要
+
+### アクション詳細
+
+#### 1. `setUser(user: User)`
+
+**用途:** 完全なユーザーオブジェクトで上書き
+
+**使用例:**
+```typescript
+const { setUser } = useSessionStore();
+
+// API レスポンスからユーザー情報を取得して設定
+const response = await fetch('/api/session/init');
+const data = await response.json();
+setUser(data.user);
+```
+
+**重要:** `/stageup` から戻ってきた時に、**必ず `setUser` で完全なユーザーデータを更新**すること。`updateStage` だけだと `stageupDate` が更新されず、カウントダウンが動作しない。
+
+#### 2. `updateStage(stage: number)`
+
+**用途:** stageだけを更新（非推奨）
+
+**問題点:**
+```typescript
+updateStage: (stage) =>
+  set((state) =>
+    state.user ? { user: { ...state.user, stage } } : state
+  ),
+```
+- `stageupDate` が更新されない
+- カウントダウンタイマーが正しく動作しない
+- **推奨しない** - 代わりに `setUser` を使うべき
+
+#### 3. `grant1DayPass()` / `grantStandard()`
+
+**用途:** 購入フラグの更新
+
+**使用例:**
+```typescript
+const { grant1DayPass } = useSessionStore();
+
+// 1日パス購入後
+grant1DayPass();  // has1DayPass = true
+```
+
+**実装:**
+```typescript
+grant1DayPass: () =>
+  set((state) =>
+    state.user ? { user: { ...state.user, has1DayPass: true } } : state
+  ),
+```
+
+#### 4. `clearUser()`
+
+**用途:** ログアウト時にユーザー情報をクリア
+
+```typescript
+const { clearUser } = useSessionStore();
+clearUser();  // user = null
+```
+
+### State同期の注意点
+
+#### 問題: ストアとDBの不整合
+
+**シナリオ:**
+1. ユーザーが `/stageup?nextStage=3` にアクセス
+2. API が DB を更新: `stage = 3`, `stageup_date = 2025-11-21 10:30:00+09:00`
+3. `/stageup` ページで `updateStage(3)` を呼ぶ
+4. Zustandストア: `stage = 3`, `stageupDate = (古い値)` ← **不整合**
+5. `/` にリダイレクト
+6. カウントダウンタイマーが動作しない（古い `stageupDate` を参照しているため）
+
+**解決策:**
+```typescript
+// ❌ 悪い例
+if (response.ok) {
+  const data = await response.json();
+  updateStage(nextStage);  // stageupDateが更新されない
+}
+
+// ✅ 良い例
+if (response.ok) {
+  const data = await response.json();
+  if (data.user) {
+    useSessionStore.getState().setUser(data.user);  // 完全なユーザーデータで更新
+  }
+}
+```
+
+#### 問題: 初期化タイミング
+
+**シナリオ:**
+- ページロード時に `user` がまだ `null`
+- コンポーネントが `user?.stage` を参照 → `undefined`
+
+**解決策:**
+```typescript
+const { user } = useSessionStore();
+const stage = user?.stage ?? 0;  // デフォルト値を設定
+```
+
+#### 問題: Date オブジェクトのシリアライズ
+
+**シナリオ:**
+- `stageupDate` は `Date` オブジェクト
+- localStorage に保存すると文字列になる
+- 読み込み時に `Date` オブジェクトに戻す必要がある
+
+**現在の実装では自動的に処理されているが、カスタム deserialize が必要な場合:**
+```typescript
+persist(
+  (set) => ({ /* ... */ }),
+  {
+    name: 'session-storage',
+    onRehydrateStorage: () => (state) => {
+      if (state?.user?.stageupDate) {
+        state.user.stageupDate = new Date(state.user.stageupDate);
+      }
+    },
+  }
+);
+```
+
+### State デバッグのヒント
+
+**Chrome DevTools でストアを確認:**
+1. 開発者ツールを開く (F12)
+2. Application タブ → Local Storage → `http://localhost:3000`
+3. `session-storage` キーの値を確認
+
+**コンソールでストアにアクセス:**
+```javascript
+// ストアの現在の状態を取得
+useSessionStore.getState()
+
+// ストアを直接操作
+useSessionStore.getState().setUser({ ...newUser })
+```
+
+**Zustand DevTools (オプション):**
+```bash
+npm install @redux-devtools/extension
+```
+
+```typescript
+import { devtools } from 'zustand/middleware';
+
+export const useSessionStore = create<SessionStore>()(
+  devtools(
+    persist(
+      (set) => ({ /* ... */ }),
+      { name: 'session-storage' }
+    ),
+    { name: 'SessionStore' }
+  )
+);
+```
+
+### State設計のベストプラクティス
+
+1. **単一の情報源 (Single Source of Truth)**
+   - データベースが真のデータソース
+   - Zustandストアはキャッシュ・UIステートとして扱う
+   - 重要な更新は必ずAPIを経由してDBに反映
+
+2. **完全なオブジェクトで更新**
+   - 部分的な更新 (`updateStage`) ではなく、`setUser` で完全なデータを設定
+   - APIレスポンスをそのまま使用すると不整合が起きにくい
+
+3. **デフォルト値を設定**
+   - `user?.stage ?? 0` のように、`null`/`undefined` チェックを徹底
+   - コンポーネントが初期化前にレンダリングされても安全
+
+4. **永続化のタイミングを理解**
+   - Zustandは `set()` が呼ばれた瞬間に localStorage に保存
+   - 非同期処理の完了を待たずに保存される点に注意
+
+5. **セキュリティ**
+   - localStorage は XSS 攻撃に脆弱
+   - 機密情報（パスワード、トークン）は保存しない
+   - セッションIDは UUID で予測不可能にする
+
+---
+
 ## API エンドポイント
 
 ### セッション管理
