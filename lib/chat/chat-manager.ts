@@ -7,9 +7,11 @@ export class ChatManager {
   private lastAnswer: string | null = null;
   private seq = 0;
   private timers: ReturnType<typeof setTimeout>[] = [];
+  private defaultUserAvatar: string; // デフォルトアバターを保存
 
   constructor(script: ChatScript) {
     this.script = script;
+    this.defaultUserAvatar = script.userAvatar; // 初期値を保存
   }
 
   initialize(): Message[] {
@@ -95,12 +97,21 @@ export class ChatManager {
       
       // User[avatar]: ノードの処理 - ユーザーアバターを更新
       if (node.type === 'user-avatar' && node.avatarUrl) {
-        // defaultUser.png が指定された場合はアバターを非表示にする
-        if (node.avatarUrl.includes('defaultUser.png')) {
-          this.script.userAvatar = '';
-        } else {
-          this.script.userAvatar = node.avatarUrl;
+        const url = node.avatarUrl.trim();
+        
+        // 'default' キーワードでデフォルトアバターに戻す
+        if (url === 'default') {
+          this.script.userAvatar = this.defaultUserAvatar;
         }
+        // defaultUser.png が指定された場合はアバターを非表示にする
+        else if (url.includes('defaultUser.png')) {
+          this.script.userAvatar = '';
+        }
+        // その他のパスはそのまま設定
+        else {
+          this.script.userAvatar = url;
+        }
+        
         this.index++;
         continue;
       }
