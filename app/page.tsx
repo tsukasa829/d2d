@@ -23,7 +23,7 @@ export default function Home() {
       
       // stageupDateは既にJST（日本時間）で保存されているため、そのまま使用
       const stageupTime = new Date(user.stageupDate).getTime();
-      const oneHourLater = stageupTime + 60 * 60 * 1000; // 1時間後
+      const oneHourLater = stageupTime + 5 * 60 * 1000; // 5分後
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((oneHourLater - now) / 1000));
       
@@ -52,7 +52,7 @@ export default function Home() {
   };
 
   const days = [
-    { day: 1, title: "初回カウンセリング", completed: stage > 1, accessible: stage >= 1, path: "/chat/day1-confirm" },
+    { day: 1, title: "初回カウンセリング", completed: stage > 1, accessible: stage >= 1, path: "/chat/day1" },
     { day: 2, title: "ストレス要因の特定", completed: stage > 2, accessible: stage >= 2, path: "/chat/day2" },
     { day: 3, title: "対処法の検討", completed: stage > 3, accessible: stage >= 3, path: "/chat/day3" },
     { day: 4, title: "実践とフィードバック", completed: stage > 4, accessible: stage >= 4, path: "/chat/day4" },

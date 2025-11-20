@@ -74,6 +74,9 @@ function SuccessContent() {
         }
 
         setProcessing(false);
+        
+        // 完了後に/stageup?nextStage=3へリダイレクト
+        router.push('/stageup?nextStage=3');
       } catch (err: any) {
         console.error('Error granting 1-day pass:', err);
         setError(err.message || '処理中にエラーが発生しました');

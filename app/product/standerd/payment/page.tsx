@@ -53,8 +53,8 @@ export default function StandardPaymentPage() {
                   <Banknote className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="font-medium">デビットカード払い</p>
-                  <p className="text-sm text-gray-600">即時引き落とし</p>
+                  <p className="font-medium">一括払い</p>
+                  <p className="text-sm text-gray-600">デビット/クレジット対応</p>
                 </div>
               </Link>
             ) : (

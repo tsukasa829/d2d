@@ -19,45 +19,45 @@ export default function ServicePlansPage() {
       name: '法人プラン',
       price: '¥5,000,000',
       icon: <Building2 className="w-8 h-8" />,
-      gradient: 'from-[#9333EA] to-[#7C3AED]',
+      gradient: 'from-[#E9D5FF] to-[#B794F6]',
       features: [
         '全社員対象の無制限カウンセリング',
         '専任カウンセラー配置',
         'メンタルヘルス研修',
         '管理者向けコンサルティング',
-        '24時間緊急対応',
-        '月次レポート提供',
+        '23社が利用中'
       ],
     },
     {
       id: 'doctor',
-      name: '医師プラン',
+      name: '開業医&経営者プラン',
       price: '¥3,000,000',
       icon: <Stethoscope className="w-8 h-8" />,
-      gradient: 'from-[#B794F6] to-[#9333EA]',
+      gradient: 'from-[#E9D5FF] to-[#B794F6]',
       features: [
-        '医療従事者専門カウンセリング',
-        '業界特化型サポート',
-        'バーンアウト予防プログラム',
-        '同僚紹介割引',
-        '優先予約',
+        '従業員サポート',
+        'ご家族サポート',
+        '人事コンサルティング',
+
         '年間フォローアップ',
+        '410家族が利用中',
       ],
     },
     {
       id: 'personal',
       name: '個人プラン',
-      price: '¥1,000,000',
+      price: '¥600,000',
       icon: <User className="w-8 h-8" />,
       popular: true,
-      gradient: 'from-[#E9D5FF] to-[#B794F6]',
+      gradient: 'from-[#B794F6] to-[#9333EA]',
       features: [
-        '月1回カウンセリング（年間8回）',
+        'サービス内容は医師&経営者プランと同じ',
         'チャットサポート',
-        'ビデオ/音声通話対応',
-        'セルフケアツール',
-        'プログレス・トラッキング',
-        '柔軟なスケジュール変更',
+        'オーダーメイドのセッション作成',
+        '月あたり1万円～利用可能',
+        '2,987人が利用中',
+        '3,000枠が埋まり次第終了します',
+        'あなたが治るまで、生涯サポート',
       ],
     },
   ];
@@ -78,7 +78,7 @@ export default function ServicePlansPage() {
             {plan.popular && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                 <div className="bg-gradient-to-r from-[#9333EA] to-[#B794F6] text-white px-4 py-1 rounded-full text-sm shadow-lg backdrop-blur-md border border-white/30">
-                  人気プラン
+                  あなた向けプラン
                 </div>
               </div>
             )}
@@ -97,7 +97,9 @@ export default function ServicePlansPage() {
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl tracking-tight">{plan.price}</span>
-                  <span className="text-white/90 text-sm">/年</span>
+                  {plan.id === 'personal' && (
+                    <span className="text-xl tracking-tight ml-2">/月額10,000円</span>
+                  )}
                 </div>
               </div>
 
@@ -114,16 +116,19 @@ export default function ServicePlansPage() {
                 </ul>
 
                 <div className="flex justify-center">
-                  <Link
-                    href={plan.id === 'personal' ? '/product/standerd/payment' : (process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL || '/product/1daypass')}
-                    className={`mt-6 px-8 py-3 rounded-xl transition-all backdrop-blur-md border shadow-lg ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-[#9333EA]/80 to-[#B794F6]/80 text-white hover:shadow-xl hover:scale-[1.02] border-white/40'
-                        : 'bg-white/60 text-[#9333EA] hover:bg-white/80 border-white/60'
-                    }`}
-                  >
-                    お申し込み
-                  </Link>
+                  {plan.id === 'personal' ? (
+                    <Link
+                      href="/product/standerd/payment"
+                      className="mt-6 px-8 py-3 rounded-xl transition-all backdrop-blur-md border shadow-lg bg-gradient-to-r from-[#9333EA]/80 to-[#B794F6]/80 text-white hover:shadow-xl hover:scale-[1.02] border-white/40 flex items-center gap-2 justify-center"
+                    >
+                      <Sparkles className="w-5 h-5" />
+                      詳細を見る
+                    </Link>
+                  ) : (
+                    <div className="mt-6 px-8 py-3 rounded-xl backdrop-blur-md border shadow-lg bg-white/60 text-gray-500 border-white/60 cursor-not-allowed">
+                      ご紹介のみ
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
