@@ -1,5 +1,5 @@
 ---
-userAvatar: /avatars/cry.png
+userAvatar: /avatars/evil.png
 defaultBot: other
 requireCorrect: true
 wrongMessage: "猫の気持ちになって、選んでみてください"
@@ -15,7 +15,14 @@ bots:
 <!-- 挨拶とルール説明 -->
 Bot(teacher): ようこそ、D2Dへ。私はねこ先生です。
 
-Bot(teacher): これから7日間、あなたは様々な感情を持つ猫になりきって、会話を楽しみます。この世界では、どんな感情も許されます。リラックスして会話してみてください。まず最初に演じてもらう猫は、
+Bot(teacher): これから7日間、あなたは様々な感情を持つ猫になりきって、会話を楽しみます。この世界では、どんな感情も許されます。リラックスして会話してみてください。
+
+User:
+- o: わかった！
+
+User[avatar]: /avatars/evil.png
+
+Bot(teacher): まず最初に演じてもらう猫は、
 
 <!-- プロフィール紹介 -->
 Bot(teacher)[image]: /avatars/cry.png
@@ -24,10 +31,7 @@ Bot(teacher): この子は悲しみ猫、シズク。悲しむのが大好きな
 
 Bot(teacher): これから相手役の猫が悲しみ猫に話しかけます。そうしたらあなたは悲しみ猫になりきって返事を選んでください。
 
-User:
-- o: わかった！
 
-User[avatar]: /avatars/cry.png
 
 <!-- セット1 -->
 Bot(other): さっきの集合写真、君が写ってなかった…ごめん…
