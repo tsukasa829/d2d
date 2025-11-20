@@ -51,7 +51,12 @@ export default function StageUpPage() {
         if (response.ok) {
           const data = await response.json();
           console.log('[StageUp] API response:', data);
-          updateStage(nextStage);
+          // stageだけでなく、stageupDateも含む完全なユーザーデータで更新
+          if (data.user) {
+            useSessionStore.getState().setUser(data.user);
+          } else {
+            updateStage(nextStage);
+          }
         } else {
           const errorData = await response.json();
           console.error('[StageUp] API error:', errorData);

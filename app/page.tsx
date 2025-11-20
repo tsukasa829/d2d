@@ -21,6 +21,12 @@ export default function Home() {
     const calculateRemaining = () => {
       if (!user.stageupDate) return;
       
+      // stageが1のときは待機時間0
+      if (stage === 1) {
+        setRemainingSeconds(null);
+        return;
+      }
+      
       // stageupDateは既にJST（日本時間）で保存されているため、そのまま使用
       const stageupTime = new Date(user.stageupDate).getTime();
       const oneHourLater = stageupTime + 5 * 60 * 1000; // 5分後
@@ -43,7 +49,7 @@ export default function Home() {
     calculateRemaining();
     const interval = setInterval(calculateRemaining, 1000);
     return () => clearInterval(interval);
-  }, [user?.stageupDate]);
+  }, [user?.stageupDate, stage]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);

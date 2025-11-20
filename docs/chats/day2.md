@@ -7,6 +7,11 @@ bots:
     avatar: /avatars/guide.svg
 ---
 
+
+Bot(doctor)[button]: 次へ進む | /product/1daypass
+
+
+
 Bot(guide): Day 2へようこそ！
 
 Bot(guide): 今日のテーマは「基礎を固める」です。

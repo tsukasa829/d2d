@@ -7,6 +7,9 @@ bots:
     avatar: /avatars/guide.svg
 ---
 
+Bot(doctor)[button]: 次へ進む | /product/standerd
+
+
 Bot(guide): Day 3へようこそ！
 
 Bot(guide): 今日のテーマは「応用編」です。

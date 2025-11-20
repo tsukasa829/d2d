@@ -52,8 +52,8 @@ export async function createSession(sessionId: string): Promise<User> {
   const jstDate = new Date(now.getTime() + jstOffset);
   const jstString = jstDate.toISOString().replace('Z', '+09:00');
   await db.query(
-    `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, stage, created_at, last_access_at)
-     VALUES ($1, NULL, FALSE, FALSE, FALSE, 0, $2, $3)
+    `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, stage, stageup_date, created_at, last_access_at)
+     VALUES ($1, NULL, FALSE, FALSE, FALSE, 1, $2, $2, $3)
      ON CONFLICT (session_id) DO NOTHING`,
     [sessionId, jstString, jstString]
   );
@@ -63,8 +63,8 @@ export async function createSession(sessionId: string): Promise<User> {
     trial: false,
     has1DayPass: false,
     hasStandard: false,
-    stage: 0,
-    stageupDate: null,
+    stage: 1,
+    stageupDate: jstDate,
     createdAt: jstDate,
     lastAccessAt: jstDate,
   };
