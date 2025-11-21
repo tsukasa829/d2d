@@ -34,6 +34,14 @@ export class ChatManager {
     return [];
   }
 
+  isPaymentMode(): boolean {
+    const node = this.script.nodes[this.index];
+    if (node && node.type === 'user' && node.isPayment) {
+      return node.isPayment === true;
+    }
+    return false;
+  }
+
   handleUserChoice(choice: string): void {
     const node = this.script.nodes[this.index];
     if (!node || node.type !== 'user') return;
@@ -70,7 +78,7 @@ export class ChatManager {
     if (!isCorrect) {
       // 不正解: 進行を止めて、その場でフィードバックを表示（teacher が話す）
       const feedback = selected?.wrongMessage || this.script.wrongMessage || '違います。もう一度選んでください。';
-      
+
       // wrongMessageは常にteacher(ねこ先生)が発言する
       const teacherAvatar = this.script.bots && this.script.bots['teacher']
         ? this.script.bots['teacher'].avatar
@@ -89,7 +97,7 @@ export class ChatManager {
         });
       }, shortDelay);
       this.timers.push(t);
-      
+
       // index は据え置き
       return;
     }
@@ -115,11 +123,11 @@ export class ChatManager {
     let accDelay = 0;
     while (this.index < this.script.nodes.length) {
       const node: ScriptNode = this.script.nodes[this.index];
-      
+
       // User[avatar]: ノードの処理 - ユーザーアバターを更新
       if (node.type === 'user-avatar' && node.avatarUrl) {
         const url = node.avatarUrl.trim();
-        
+
         // 'default' キーワードでデフォルトアバターに戻す
         if (url === 'default') {
           this.script.userAvatar = this.defaultUserAvatar;
@@ -132,11 +140,11 @@ export class ChatManager {
         else {
           this.script.userAvatar = url;
         }
-        
+
         this.index++;
         continue;
       }
-      
+
       if (node.type === 'bot') {
         const fullText = this.interpolate(node.content);
         const getAvatarFor = (n: ScriptNode) => {
@@ -156,7 +164,7 @@ export class ChatManager {
         // Behavior:
         // - If delaySubsequent is false (initial call), push all consecutive bot nodes immediately
         // - If delaySubsequent is true, schedule all bot nodes with per-message delay
-        
+
         if (delaySubsequent) {
           // Schedule all bot nodes with per-message delay (including first)
           for (let k = 0; k < botNodes.length; k++) {

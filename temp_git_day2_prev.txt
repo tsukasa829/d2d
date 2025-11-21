@@ -1,0 +1,24 @@
+﻿---
+userAvatar: /avatars/user.svg
+defaultBot: guide
+bots:
+  guide:
+    displayName: 繧ｬ繧､繝・    avatar: /avatars/guide.svg
+---
+
+
+Bot(doctor)[button]: 谺｡縺ｸ騾ｲ繧 | /product/1daypass
+
+
+
+Bot(guide): Day 2縺ｸ繧医≧縺薙◎・・
+Bot(guide): 莉頑律縺ｮ繝・・繝槭・縲悟渕遉弱ｒ蝗ｺ繧√ｋ縲阪〒縺吶・
+User:
+- 邯壹￠繧・- 繧ｹ繧ｭ繝・・
+
+Bot(guide): {{answer}}繧帝∈謚槭＆繧後∪縺励◆縲・
+Bot(guide): 縺昴ｌ縺ｧ縺ｯ谺｡縺ｫ騾ｲ縺ｿ縺ｾ縺励ｇ縺・・
+User:
+- 谺｡縺ｸ
+- 謌ｻ繧・
+Bot(guide): 縺ゅｊ縺後→縺・＃縺悶＞縺ｾ縺励◆縲ゅ∪縺滓・譌･縺贋ｼ壹＞縺励∪縺励ｇ縺・ｼ・

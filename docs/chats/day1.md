@@ -10,17 +10,29 @@ bots:
   teacher:
     displayName: ねこ先生
     avatar: /avatars/teacherCat.png
+  tsubaki:
+    displayName: Tsubaki
+    avatar: /avatars/tsubaki.png
+  cry:
+    displayName: Sizuku
+    avatar: /avatars/cry.png
 ---
 
 <!-- 挨拶とルール説明 -->
-Bot(teacher): ようこそ、D2Dへ。私はねこ先生です。
+Bot(tsubaki): ようこそ、D2Dへ。
 
-Bot(teacher): これから7日間、あなたは様々な感情を持つ猫になりきって、会話を楽しみます。この世界では、どんな感情も許されます。リラックスして会話してみてください。
+Bot(tsubaki): これから7日間、あなたは様々な感情を持つ猫になりきって、会話をしていきます。この世界では、どんな感情も許されます。リラックスして会話してみてください。
 
 User [avatar=none]:
-- o: わかった！
+- o: 次へ
 
-Bot(teacher): まず最初に演じてもらう猫は、
+Bot(tsubaki): この世界では私も猫の姿になります。ねこ先生と呼んでください。
+
+<!-- プロフィール紹介 -->
+Bot(teacher)[image]: /avatars/teacherCat.png
+
+User [avatar=none]:
+- o: 次へ
 
 <!-- プロフィール紹介 -->
 Bot(teacher)[image]: /avatars/cry.png
@@ -30,7 +42,7 @@ Bot(teacher): この子は悲しみ猫、シズク。悲しむのが大好きな
 User [avatar=none]:
 - o: OK！
 
-Bot(teacher): これから相手役の猫が悲しみ猫に話しかけます。そうしたらあなたは悲しみ猫になりきって返事を選んでください。
+Bot(teacher): これから相手役の猫が悲しみ猫に話しかけます。あなたは悲しみ猫になりきって返事を選んでください。
 
 User [avatar=none]:
 - o: はじめる
@@ -105,6 +117,33 @@ User:
 
 Bot(other): 大事な日を忘れてた…本当にごめん…
 
-Bot(teacher): 大切にされたい気持ちを表現できましたね。悲しみは悪いことじゃありません。もっともっと悲しんでいいんです。君は自分の気持ちを大切にできました。
+Bot(teacher): 大切にされたい気持ちを表現できましたね。悲しみは悪いことじゃありません。もっともっと悲しんでいいんです。
 
-Bot(teacher)[button]: 次へ進む | /stageup?nextStage=2
+Bot(teacher): 最後に、悲しみ猫シズクにお礼を言ってあげましょう
+
+Bot(cry)[image]: /avatars/cry.png
+
+User:
+- o: 今日はありがとう
+- x: 悲しみなんてなくなればいいのに
+
+Bot(cry): うん…終わっちゃうの悲しいけど
+Bot(cry): きっとまた会えるよ
+Bot(cry): これあげる
+Bot(cry)[image]: /avatars/map.png
+
+User:
+- o: 受け取る
+
+Bot(teacher): シズクからプレゼントをもらえました
+Bot(teacher): これは特別な”ある猫”の場所が載ってる地図です。あなたもいつか会える日が来るかもしれません。
+Bot(teacher): 明日は怒り猫をご紹介します。楽しい子ですよ。きっと仲良くなれます。
+
+User [avatar=none]:
+- o: Day2へ進む
+- x: ここでD2Dを終了する
+
+Bot(teacher): Day1お疲れ様でした。次のセッションまで少し休憩しましょう。Day2は５分後にはじまります。
+
+Bot(teacher)[redirect]: /stageup?nextStage=2 | 2000
+

@@ -106,6 +106,18 @@ export function parseScript(markdown: string): ChatScript {
       i++;
       continue;
     }
+    // Bot(id)[redirect]: url | delay
+    const mRedirect = line.match(/^Bot(?:\(([^)]+)\))?\[redirect\]:\s*(.+)$/);
+    if (mRedirect) {
+      const speakerId = mRedirect[1]; // optional
+      const rest = mRedirect[2];
+      const [url, delayStr] = rest.split('|').map(s => s.trim());
+      const delay = delayStr ? parseInt(delayStr, 10) : 0;
+      nodes.push({ type: 'bot', content: '', redirectUrl: url, redirectDelay: delay, speakerId });
+      i++;
+      continue;
+    }
+
     // Bot: テキスト（既存形式）
     if (line.startsWith('Bot:')) {
       const contentLine = line.replace(/^Bot:\s?/, '').trim();
@@ -170,6 +182,38 @@ export function parseScript(markdown: string): ChatScript {
         break;
       }
       nodes.push({ type: 'user', content: '', choices, avatarUrl: avatarSpec.trim() });
+      continue;
+    }
+
+    // User [payment]: (決済選択肢)
+    if (line.match(/^User\s*\[payment\]:\s*$/)) {
+      const choices: Choice[] = [];
+      i++;
+      while (i < lines.length) {
+        const l = lines[i].trim();
+        if (!l) { i++; continue; }
+        if (l.startsWith('- ')) {
+          const raw = l.replace(/^-\s+/, '');
+          // 決済用はシンプルに label: value 形式などを想定、あるいは既存の o/x も使えるようにする
+          // ここでは既存ロジックを流用
+          const oxMatch = raw.match(/^(o|x):\s*(.+)$/);
+          if (oxMatch) {
+            const kind = oxMatch[1];
+            const rest = oxMatch[2];
+            const [labelPart, wrongMsgPart] = rest.split('|').map(s => s?.trim());
+            const c: Choice = { label: labelPart, value: labelPart, correct: kind === 'o' };
+            if (kind === 'x' && wrongMsgPart) c.wrongMessage = wrongMsgPart;
+            choices.push(c);
+          } else {
+            const c: Choice = { label: raw, value: raw };
+            choices.push(c);
+          }
+          i++;
+          continue;
+        }
+        break;
+      }
+      nodes.push({ type: 'user', content: '', choices, isPayment: true });
       continue;
     }
 

@@ -20,25 +20,25 @@ export default function Home() {
 
     const calculateRemaining = () => {
       if (!user.stageupDate) return;
-      
+
       // stageが1のときは待機時間0
       if (stage === 1) {
         setRemainingSeconds(null);
         return;
       }
-      
+
       // stageupDateは既にJST（日本時間）で保存されているため、そのまま使用
       const stageupTime = new Date(user.stageupDate).getTime();
       const oneHourLater = stageupTime + 5 * 60 * 1000; // 5分後
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((oneHourLater - now) / 1000));
-      
+
       console.log('[Countdown] stageupDate:', user.stageupDate);
       console.log('[Countdown] stageupTime:', new Date(stageupTime).toLocaleString('ja-JP'));
       console.log('[Countdown] oneHourLater:', new Date(oneHourLater).toLocaleString('ja-JP'));
       console.log('[Countdown] now:', new Date(now).toLocaleString('ja-JP'));
       console.log('[Countdown] remaining seconds:', remaining);
-      
+
       if (remaining === 0) {
         setRemainingSeconds(null);
       } else {
@@ -58,13 +58,13 @@ export default function Home() {
   };
 
   const days = [
-    { day: 1, title: "初回カウンセリング", completed: stage > 1, accessible: stage >= 1, path: "/chat/day1" },
-    { day: 2, title: "ストレス要因の特定", completed: stage > 2, accessible: stage >= 2, path: "/chat/day2" },
-    { day: 3, title: "対処法の検討", completed: stage > 3, accessible: stage >= 3, path: "/chat/day3" },
-    { day: 4, title: "実践とフィードバック", completed: stage > 4, accessible: stage >= 4, path: "/chat/day4" },
-    { day: 5, title: "進捗確認", completed: stage > 5, accessible: stage >= 5, path: "/chat/day5" },
-    { day: 6, title: "最終調整", completed: stage > 6, accessible: stage >= 6, path: "/chat/day6" },
-    { day: 7, title: "振り返りとまとめ", completed: stage > 7, accessible: stage >= 7, path: "/chat/day7" },
+    { day: 1, title: "悲しみと仲良くなる", completed: stage > 1, accessible: stage >= 1, path: "/chat/day1" },
+    { day: 2, title: "自分の怒りに気づく", completed: stage > 2, accessible: stage >= 2, path: "/chat/day2" },
+    { day: 3, title: "嫉妬の裏にある願い", completed: stage > 3, accessible: stage >= 3, path: "/chat/day3" },
+    { day: 4, title: "孤独を抱きしめる", completed: stage > 4, accessible: stage >= 4, path: "/chat/day4" },
+    { day: 5, title: "恥ずかしい自分を許す", completed: stage > 5, accessible: stage >= 5, path: "/chat/day5" },
+    { day: 6, title: "恐れの正体を知る", completed: stage > 6, accessible: stage >= 6, path: "/chat/day6" },
+    { day: 7, title: "本当の自分に出会う", completed: stage > 7, accessible: stage >= 7, path: "/chat/day7" },
   ];
   const completedCount = days.filter((d) => d.completed).length;
 
@@ -96,30 +96,28 @@ export default function Home() {
             const isLocked = !day.accessible;
             const isCurrentStage = day.day === Math.floor(stage); // 現在のステージ（最後に完了した日）
             const isCountingDown = isCurrentStage && remainingSeconds !== null && remainingSeconds > 0;
-            
+
             const DayCard = (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${
-                  day.completed 
-                    ? 'border-white/60 opacity-60 cursor-not-allowed' 
+                className={`bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border-2 transition-all ${day.completed
+                    ? 'border-white/60 opacity-60 cursor-not-allowed'
                     : isLocked
-                    ? 'border-white/30 opacity-40 cursor-not-allowed'
-                    : isCountingDown
-                    ? 'border-white/40 cursor-not-allowed'
-                    : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
-                }`}
+                      ? 'border-white/30 opacity-40 cursor-not-allowed'
+                      : isCountingDown
+                        ? 'border-white/40 cursor-not-allowed'
+                        : 'border-white/40 hover:shadow-xl hover:bg-white/70 cursor-pointer'
+                  }`}
               >
                 <div className="p-5 flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 shadow-lg ${
-                    day.completed 
-                      ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white' 
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 shadow-lg ${day.completed
+                      ? 'bg-gradient-to-br from-[#B794F6]/80 to-[#9333EA]/80 text-white'
                       : isLocked
-                      ? 'bg-white/40 text-gray-400'
-                      : 'bg-white/60 text-[#9333EA]'
-                  }`}>
+                        ? 'bg-white/40 text-gray-400'
+                        : 'bg-white/60 text-[#9333EA]'
+                    }`}>
                     {day.completed ? (
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

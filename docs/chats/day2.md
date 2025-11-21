@@ -1,31 +1,123 @@
 ---
-userAvatar: /avatars/user.svg
-defaultBot: guide
+userAvatar: /avatars/angry.png
+defaultBot: other
+requireCorrect: true
+wrongMessage: "猫の気持ちになって、選んでみてください"
 bots:
-  guide:
-    displayName: ガイド
-    avatar: /avatars/guide.svg
+  other:
+    displayName: 相手猫
+    avatar: /avatars/otherCat.png
+  teacher:
+    displayName: ねこ先生
+    avatar: /avatars/teacherCat.png
+  tsubaki:
+    displayName: Tsubaki
+    avatar: /avatars/tsubaki.png
 ---
 
 
-Bot(doctor)[button]: 次へ進む | /product/1daypass
 
+Bot(tsubaki): 今日はたくさんの怒りを認め、表現することができましたね。
 
+Bot(tsubaki): 怒りは悪いものではありません。自分の大切なものを守るための、必要な感情です。
 
-Bot(guide): Day 2へようこそ！
+Bot(tsubaki): また明日、次の感情と向き合いましょう。
 
-Bot(guide): 今日のテーマは「基礎を固める」です。
+Bot(tsubaki): この体験はいかがでしたか？もっと続けてみたいと思ったら、1日体験パスをお試しください。
+
+User [payment]:
+- o: google
+- o: apple
+- o: credit
+
+<!--
+==============================================
+開発中のため一時的に削除した内容（本番環境では復元すること）
+==============================================
+
+Bot(tsubaki): こんにちは。今日は「怒り」と向き合う日です。
+
+Bot(tsubaki): 怒りは悪い感情ではありません。自分の大切なものを守るための、とても自然な反応です。
+
+Bot(tsubaki): 今日は怒り猫のアカネになりきって、会話してみましょう。
+
+Bot(tsubaki)[image]: /avatars/angry.png
+
+Bot(tsubaki): この子は怒り猫のアカネ。怒るのが得意な子です。猫の世界では、どんな感情も許されます。もちろん、怒りもOKです。アカネになったつもりで、会話してみましょう！
+
+<!-- セット1 -->
+Bot(other): さっき約束してた遊びの時間、すっかり忘れてたよ…ごめん…
 
 User:
-- 続ける
-- スキップ
+- x: まぁいいよ、別に
+- x: 忙しかったんでしょ
+- o: 約束したのに！すごく腹が立った
 
-Bot(guide): {{answer}}を選択されました。
+Bot(other): 本当にごめん…待たせちゃったね…
 
-Bot(guide): それでは次に進みましょう。
+Bot(teacher): 怒りの感情を認めることができましたね。怒ってもいいんですよ。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット2 -->
+Bot(other): あ、君が大事にしてた場所に、勝手に僕の物置いちゃった…
 
 User:
-- 次へ
-- 戻る
+- x: 別に気にしてないよ
+- o: 勝手に使わないでほしい！ムカつく
+- x: 使っていいよ
 
-Bot(guide): ありがとうございました。また明日お会いしましょう！
+Bot(other): ごめん…気づかなかったよ…
+
+Bot(teacher): 自分の境界線を守る怒りを表現できましたね。素晴らしいです。もっと怒ってもいいんですよ。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット3 -->
+Bot(other): 君が一生懸命作った作品、僕が間違えて捨てちゃったみたい…
+
+User:
+- x: まぁ、また作ればいいよ
+- x: 仕方ないね
+- o: 何日もかけて作ったのに！許せない
+
+Bot(other): 本当にごめん…取り返しがつかないことをしてしまった…
+
+Bot(teacher): 努力を無駄にされた怒りは正当です。どんどん表現していいんです。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット4 -->
+Bot(other): 君の話、途中で遮って自分の話ばっかりしちゃった…
+
+User:
+- x: 別に聞いてほしくなかったから
+- o: 話を聞いてくれなくて、イライラした
+- x: 大丈夫だよ
+
+Bot(other): ごめん…君の話をちゃんと聞くべきだった…
+
+Bot(teacher): 自分の時間を大切にする怒りを表現できましたね。その怒りは大切です。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット5 -->
+Bot(other): 君が頼んでたこと、すっかり忘れて他のことやっちゃった…
+
+User:
+- x: 自分でやればよかったね
+- x: 別にいいよ
+- o: 信じて頼んだのに！裏切られた気分
+
+Bot(other): 本当にごめん…信頼を裏切ってしまったね…
+
+Bot(teacher): 信頼を裏切られた怒りを表現できましたね。怒りは自分を守る大切な感情です。よく頑張りました。
+
+==============================================
+上記の内容を18行目に挿入して復元してください
+==============================================
+-->

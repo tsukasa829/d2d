@@ -8,6 +8,8 @@ export interface Message {
   buttonLabel?: string;
   buttonUrl?: string;
   buttons?: NavigationButton[];
+  redirectUrl?: string;
+  redirectDelay?: number;
 }
 
 export interface Choice {
@@ -32,6 +34,9 @@ export interface ScriptNode {
   buttons?: NavigationButton[];
   speakerId?: string; // 複数Bot対応: 話者ID
   avatarUrl?: string; // User[avatar]用
+  redirectUrl?: string;
+  redirectDelay?: number;
+  isPayment?: boolean; // User[payment]用
 }
 
 export interface ChatScript {

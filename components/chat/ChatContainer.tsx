@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Menu, MoreVertical } from 'lucide-react';
 import AppHeader from '@/components/ui/AppHeader';
 import MessageBubble from './MessageBubble';
@@ -13,8 +14,10 @@ import { Message } from '@/lib/types/chat';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
 export default function ChatContainer({ sessionId }: { sessionId: string }) {
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [choices, setChoices] = useState<{ label: string; value: string }[]>([]);
+  const [isPaymentMode, setIsPaymentMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +42,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
       setMessages(initial);
       prevLenRef.current = initial.length;
       setChoices(managerRef.current.getCurrentChoices());
+      setIsPaymentMode(managerRef.current.isPaymentMode());
       setLoading(false);
     })();
   }, [sessionId]);
@@ -60,27 +64,42 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
       if (list.length !== prevLenRef.current) {
         prevLenRef.current = list.length;
         shouldScrollRef.current = true;
+        setMessages(list);
+        setChoices(mgr.getCurrentChoices());
+        setIsPaymentMode(mgr.isPaymentMode());
       }
-      setMessages(list);
-      setChoices(mgr.getCurrentChoices());
     }, 200);
     return () => clearInterval(t);
   }, []);
 
+  // Redirect logic
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.redirectUrl) {
+      const delay = lastMsg.redirectDelay || 0;
+      const t = setTimeout(() => {
+        router.push(lastMsg.redirectUrl!);
+      }, delay);
+      return () => clearTimeout(t);
+    }
+  }, [messages, router]);
+
   const handleSelect = (value: string) => {
     managerRef.current?.handleUserChoice(value);
     setChoices([]);
+    setIsPaymentMode(false);
   };
 
   return (
     <div className="h-screen flex flex-col max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">
       {/* Header (shared) */}
       <AppHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between w-full px-4">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="tracking-wide font-semibold">D2D カウンセリング</h1>
+          <h1 className="tracking-wide font-semibold">D2D</h1>
           <button className="p-2 hover:bg-white/20 rounded-lg transition-colors opacity-0 pointer-events-none">
             <MoreVertical className="w-6 h-6" />
           </button>
@@ -91,32 +110,32 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
       {loading ? (
         <LoadingScreen />
       ) : (
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {
-          messages.map((m, index) => {
-            // 画像メッセージ
-            if (m.imageUrl) {
-              return <ImageMessage key={m.id} imageUrl={m.imageUrl} isBot={m.type === 'bot'} />;
-            }
-            // 複数ボタン
-            if (m.buttons && m.buttons.length > 0) {
-              return <NavigationButtons key={m.id} buttons={m.buttons} isBot={m.type === 'bot'} />;
-            }
-            // 単一ボタン
-            if (m.buttonLabel && m.buttonUrl) {
-              return <NavigationButton key={m.id} label={m.buttonLabel} url={m.buttonUrl} isBot={m.type === 'bot'} />;
-            }
-            // 通常テキストメッセージ
-            return <MessageBubble key={m.id} message={m} index={index} />;
-          })
-        }
-      </div>
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+          {
+            messages.map((m, index) => {
+              // 画像メッセージ
+              if (m.imageUrl) {
+                return <ImageMessage key={m.id} imageUrl={m.imageUrl} isBot={m.type === 'bot'} />;
+              }
+              // 複数ボタン
+              if (m.buttons && m.buttons.length > 0) {
+                return <NavigationButtons key={m.id} buttons={m.buttons} isBot={m.type === 'bot'} />;
+              }
+              // 単一ボタン
+              if (m.buttonLabel && m.buttonUrl) {
+                return <NavigationButton key={m.id} label={m.buttonLabel} url={m.buttonUrl} isBot={m.type === 'bot'} />;
+              }
+              // 通常テキストメッセージ
+              return <MessageBubble key={m.id} message={m} index={index} />;
+            })
+          }
+        </div>
       )}
 
       {/* Input Area with Choice Buttons */}
       {!loading && (
         <div className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
-          <ChoiceButtons choices={choices} onSelect={handleSelect} />
+          <ChoiceButtons choices={choices} onSelect={handleSelect} isPaymentMode={isPaymentMode} />
         </div>
       )}
     </div>
