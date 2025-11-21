@@ -14,7 +14,7 @@ bots:
     displayName: Tsubaki
     avatar: /avatars/tsubaki.png
   evil:
-    displayName: 嫉妬猫ミドリ
+    displayName: 嫉妬猫モヤ
     avatar: /avatars/evil.png
 ---
 
@@ -31,7 +31,7 @@ Bot(tsubaki): それでは、嫉妬猫を紹介します。
 <!-- プロフィール紹介 -->
 Bot(tsubaki)[image]: /avatars/evil.png
 
-Bot(tsubaki): この子は嫉妬猫のミドリ。誰かを羨ましくて、悔しくて、モヤモヤしている子です。猫の世界では、どんな感情も許されます。もちろん、嫉妬もOKです。ミドリになったつもりで、会話してみましょう!
+Bot(tsubaki): この子は嫉妬猫のモヤ。誰かを羨ましくて、悔しくて、モヤモヤしている子です。猫の世界では、どんな感情も許されます。もちろん、嫉妬もOKです。モヤになったつもりで、会話してみましょう!
 
 User [avatar=none]:
 - o: OK！
