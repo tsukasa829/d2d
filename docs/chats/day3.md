@@ -108,10 +108,53 @@ User:
 
 Bot(other): 本当にごめん…君にとって大事なものだったんだね…
 
-Bot(teacher): 奪われた悔しさを爆発させることができましたね。嫉妬はエネルギーです。そのエネルギーを、自分のために使いましょう。
+Bot(teacher): 奪われた悔しさを爆発させることができましたね。嫉妬の裏には、あなたの「欲しい」が隠れています。自分の”本当の願い”を許してあげてください。
 
-Bot(tsubaki): 今日はドロドロとした「嫉妬」の感情を、恐れずに直視できましたね。
-Bot(tsubaki): 嫉妬の裏には、あなたの「欲しい」が隠れています。自分の欲望を許してあげてください。
-Bot(tsubaki): また明日、お会いしましょう。
+Bot(teacher): 最後に、嫉妬猫に挨拶しましょう
 
-Bot(tsubaki)[button]: 次へ進む | /stageup?nextStage=4
+Bot(evil)[image]: /avatars/evil.png
+
+User:
+- x: 嫉妬なんかしたくない
+- o: 自分の願いに気づけた。ありがとう
+
+Bot(evil)[image]: /avatars/evilSmile.png
+
+Bot(evil)[image]: /avatars/ilust.png
+
+Bot(teacher): これは…猫の似顔絵ですね。どうやら嫉妬猫を檻に閉じ込めた犯人のようです。この世界にはあなたの願いを阻む猫もいます。とても危険ですが、悪い子ではありません。会いたいですか？
+
+User [avatar=none]:
+- o: 会いに行く
+- x: ここでやめておく
+
+Bot(teacher): わかりました。では明日はその猫の正体を暴きましょう。
+
+User [avatar=none]:
+- o: Day4へ進む
+- x: ここでD2Dを終了する
+
+Bot(tsubaki): ここからのセッションはあなたの人生が変わっていまう可能性があるため、きちんとサポートするために招待制となっております。メール頂くか、ご友人からの紹介でのみ参加となります。
+
+Bot(tsubaki): お急ぎの方は３つほど簡単な質問に答えていただけると参加可能かわかります
+User [avatar=none]:
+- o: 質問に回答する
+- x: ここでD2Dを終了する
+
+Bot(tsubaki): あなたは現在、解決したい問題、変えたい性格はありますか？
+User [avatar=none]:
+- o: Yes
+- x: No
+Bot(tsubaki): 本当なこうなりたい！という未来がイメージできていますか？抽象的でもOKです
+User [avatar=none]:
+- o: Yes
+- x: No
+Bot(tsubaki): 新しい扉を開く、覚悟はありますか？
+User [avatar=none]:
+- o: Yes
+- x: No
+
+Bot(tsubaki): あなたの覚悟、理解できました。私から貴方を招待いたします。※応募が多数あり、枠が埋まっていた場合にはキャンセルとなります。ご了承ください
+User [avatar=none]:
+- o: 招待を受け、詳細を見る
+- x: ここでやめる
