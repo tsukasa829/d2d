@@ -303,7 +303,7 @@ export default function AdminPage() {
                       </button>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
-                      {new Date(user.createdAt).toLocaleString('ja-JP')}
+                      {new Date(user.createdAt).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       {deletingId === user.sessionId ? (

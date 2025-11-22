@@ -249,7 +249,7 @@ export default function TodoApp() {
                     </button>
                   </div>
                   <div className="ml-8 mt-1 text-xs text-gray-400">
-                    {new Date(todo.created_at).toLocaleString('ja-JP')}
+                    {new Date(todo.created_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}
                   </div>
                 </li>
               ))}
