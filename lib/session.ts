@@ -94,7 +94,7 @@ export async function updateSessionStandard(sessionId: string, hasStandard: bool
   );
 }
 
-export async function updateSession1DayPass(sessionId: string, has1DayPass: boolean): Promise<void> {
+export async function updateSessionStage(sessionId: string, stage: number): Promise<void> {
   const db = getDBClient();
   // UTCで保存
   const now = new Date();
