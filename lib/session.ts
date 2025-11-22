@@ -3,8 +3,11 @@ import type { User } from '@/lib/types/session';
 
 export async function getAllSessions(): Promise<User[]> {
   const db = getDBClient();
-  const result = await db.query(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, stageup_date, created_at, last_access_at
+  const result = await db.query<any>(
+    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, 
+            stageup_date AT TIME ZONE 'UTC' as stageup_date, 
+            created_at AT TIME ZONE 'UTC' as created_at, 
+            last_access_at AT TIME ZONE 'UTC' as last_access_at
      FROM sessions
      ORDER BY created_at DESC`
   );
@@ -21,10 +24,13 @@ export async function getAllSessions(): Promise<User[]> {
   }));
 }
 
-export async function getSessionById(sessionId: string): Promise<User | null> {
+export async function getSession(sessionId: string): Promise<User | null> {
   const db = getDBClient();
-  const result = await db.query(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, stageup_date, created_at, last_access_at
+  const result = await db.query<any>(
+    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, 
+            stageup_date AT TIME ZONE 'UTC' as stageup_date, 
+            created_at AT TIME ZONE 'UTC' as created_at, 
+            last_access_at AT TIME ZONE 'UTC' as last_access_at
      FROM sessions
      WHERE session_id = $1`,
     [sessionId]
