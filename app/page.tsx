@@ -27,16 +27,16 @@ export default function Home() {
         return;
       }
 
-      // stageupDateは既にJST（日本時間）で保存されているため、そのまま使用
+      // stageupDateはUTCで保存されているため、そのまま使用（ブラウザが自動的にローカルタイムゾーンに変換）
       const stageupTime = new Date(user.stageupDate).getTime();
       const oneHourLater = stageupTime + 5 * 60 * 1000; // 5分後
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((oneHourLater - now) / 1000));
 
-      console.log('[Countdown] stageupDate:', user.stageupDate);
-      console.log('[Countdown] stageupTime:', new Date(stageupTime).toLocaleString('ja-JP'));
-      console.log('[Countdown] oneHourLater:', new Date(oneHourLater).toLocaleString('ja-JP'));
-      console.log('[Countdown] now:', new Date(now).toLocaleString('ja-JP'));
+      console.log('[Countdown] stageupDate (UTC):', user.stageupDate);
+      console.log('[Countdown] stageupTime (local):', new Date(stageupTime).toLocaleString('ja-JP'));
+      console.log('[Countdown] oneHourLater (local):', new Date(oneHourLater).toLocaleString('ja-JP'));
+      console.log('[Countdown] now (local):', new Date(now).toLocaleString('ja-JP'));
       console.log('[Countdown] remaining seconds:', remaining);
 
       if (remaining === 0) {
