@@ -20,10 +20,12 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [isPaymentMode, setIsPaymentMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showChoices, setShowChoices] = useState(false);
+  const choicesRevealDelayMs = Number(process.env.NEXT_PUBLIC_CHOICES_REVEAL_DELAY ?? '2') * 1000;
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const choicesRef = useRef<HTMLDivElement | null>(null);
   const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevLenRef = useRef<number>(0);
   const shouldScrollRef = useRef<boolean>(false);
 
@@ -71,6 +73,10 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
         setChoices(mgr.getCurrentChoices());
         setIsPaymentMode(mgr.isPaymentMode());
         setShowChoices(false); // 新しい選択肢が来たら非表示にリセット
+        if (revealTimerRef.current) {
+          clearTimeout(revealTimerRef.current);
+          revealTimerRef.current = null;
+        }
       }
     }, 200);
     return () => clearInterval(t);
@@ -83,7 +89,18 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShowChoices(true);
+          if (!revealTimerRef.current) {
+            revealTimerRef.current = setTimeout(() => {
+              setShowChoices(true);
+              revealTimerRef.current = null;
+            }, choicesRevealDelayMs);
+          }
+        } else {
+          // ビューから外れたらタイマーをクリア（再到達で再カウント）
+          if (revealTimerRef.current) {
+            clearTimeout(revealTimerRef.current);
+            revealTimerRef.current = null;
+          }
         }
       },
       {
@@ -94,8 +111,14 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
 
     observer.observe(bottomSentinelRef.current);
 
-    return () => observer.disconnect();
-  }, [choices.length, messages.length]);
+    return () => {
+      observer.disconnect();
+      if (revealTimerRef.current) {
+        clearTimeout(revealTimerRef.current);
+        revealTimerRef.current = null;
+      }
+    };
+  }, [choices.length, messages.length, choicesRevealDelayMs]);
 
   // Redirect logic
   useEffect(() => {
