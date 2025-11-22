@@ -21,7 +21,7 @@ export default function PageHeader({
   const router = useRouter();
   const handleBack = () => {
     if (onBack) return onBack();
-    router.back();
+    router.push('/');
   };
 
   return (
