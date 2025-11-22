@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { 
-  getSessionById, 
+  getSession, 
   updateSessionEmail, 
   updateSession1DayPass, 
   updateSessionStandard,
@@ -15,7 +15,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const user = await getSessionById(id);
+    const user = await getSession(id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -50,7 +50,7 @@ export async function PATCH(
       await updateSessionStandard(id, body.hasStandard);
     }
 
-    const updated = await getSessionById(id);
+    const updated = await getSession(id);
     return NextResponse.json({ user: updated });
   } catch (error) {
     console.error('[admin/users/[id]] PATCH Error:', error);
