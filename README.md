@@ -84,6 +84,7 @@ npm run dev
 - `npm run dev` - 開発サーバー起動
 - `npm run build` - 本番ビルド
 - `npm run start` - 本番サーバー起動
+- `npm run deploy` - 本番環境にデプロイ（ビルド + プッシュ）
 - `npm run migrate` - マイグレーション手動実行
 - `npm run migrate:prod` - 本番環境でマイグレーション実行
 - `npm run db:reset` - データベースリセット（開発環境のみ）
@@ -134,16 +135,15 @@ npm run dev
 
 ## 本番環境へのデプロイ
 
-1. PostgreSQLデータベースを準備
-2. `.env.production`に`DATABASE_URL`を設定
-3. ビルドとデプロイ:
+### クイックデプロイ
 
 ```bash
-npm run build
-npm run start
+npm run deploy
 ```
 
-Vercel、Railway、Renderなどのプラットフォームにデプロイ可能です。
+このコマンドは以下を自動実行します：
+1. `npm run build` - 本番ビルド
+2. `git push` - GitHubにプッシュ（Netlifyが自動デプロイ）
 
 ### 環境変数の本番環境への反映
 
