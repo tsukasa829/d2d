@@ -254,7 +254,7 @@ export default function AdminPage() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-gray-800 text-xs sm:text-sm">{user.stage?.toFixed(1) ?? '0.0'}</span>
+                          <span className="font-mono text-gray-800 text-xs sm:text-sm">{user.stage != null ? Number(user.stage).toFixed(1) : '0.0'}</span>
                           <button
                             onClick={() => { setEditingStageId(user.sessionId); setStageInput(String(user.stage)); }}
                             className="text-blue-500 hover:text-blue-700 text-xs"
