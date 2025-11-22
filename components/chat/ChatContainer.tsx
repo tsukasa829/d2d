@@ -20,7 +20,8 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [isPaymentMode, setIsPaymentMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showChoices, setShowChoices] = useState(false);
-  const choicesRevealDelayMs = Number(process.env.NEXT_PUBLIC_CHOICES_REVEAL_DELAY ?? '2') * 1000;
+  // Choices reveal delay (ms): change here when needed
+  const CHOICES_REVEAL_DELAY_MS = 2000; // 2 seconds
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const choicesRef = useRef<HTMLDivElement | null>(null);
@@ -93,7 +94,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
             revealTimerRef.current = setTimeout(() => {
               setShowChoices(true);
               revealTimerRef.current = null;
-            }, choicesRevealDelayMs);
+            }, CHOICES_REVEAL_DELAY_MS);
           }
         } else {
           // ビューから外れたらタイマーをクリア（再到達で再カウント）
@@ -118,7 +119,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
         revealTimerRef.current = null;
       }
     };
-  }, [choices.length, messages.length, choicesRevealDelayMs]);
+  }, [choices.length, messages.length]);
 
   // Redirect logic
   useEffect(() => {
