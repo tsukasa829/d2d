@@ -29,7 +29,7 @@ describe('OneDayPassSuccessPage', () => {
     (useRouter as any).mockReturnValue({ push: mockPush });
     (useSearchParams as any).mockReturnValue(mockSearchParams);
     (useSessionStore as any).mockReturnValue({
-      user: { sessionId: 'test-user-123', email: null, trial: false, has1DayPass: false, hasStandard: false, createdAt: new Date().toISOString(), lastAccessAt: new Date().toISOString() },
+      user: { sessionId: 'test-user-123', email: null, has1DayPass: false, hasStandard: false, createdAt: new Date().toISOString(), lastAccessAt: new Date().toISOString() },
       grant1DayPass: mockGrant1DayPass,
     });
 

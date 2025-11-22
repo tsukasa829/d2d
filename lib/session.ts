@@ -4,7 +4,7 @@ import type { User } from '@/lib/types/session';
 export async function getAllSessions(): Promise<User[]> {
   const db = getDBClient();
   const result = await db.query<any>(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, 
+    `SELECT session_id, email, has_1day_pass, has_standard, stage, 
             stageup_date AT TIME ZONE 'UTC' as stageup_date, 
             created_at AT TIME ZONE 'UTC' as created_at, 
             last_access_at AT TIME ZONE 'UTC' as last_access_at
@@ -14,10 +14,9 @@ export async function getAllSessions(): Promise<User[]> {
   return result.rows.map((row: any) => ({
     sessionId: row.session_id,
     email: row.email,
-    trial: row.trial,
     has1DayPass: row.has_1day_pass,
     hasStandard: row.has_standard,
-    stage: Number(row.stage) ?? 0,
+    stage: row.stage,
     stageupDate: row.stageup_date ? new Date(row.stageup_date) : null,
     createdAt: new Date(row.created_at),
     lastAccessAt: new Date(row.last_access_at),
@@ -27,7 +26,7 @@ export async function getAllSessions(): Promise<User[]> {
 export async function getSession(sessionId: string): Promise<User | null> {
   const db = getDBClient();
   const result = await db.query<any>(
-    `SELECT session_id, email, trial, has_1day_pass, has_standard, stage, 
+    `SELECT session_id, email, has_1day_pass, has_standard, stage, 
             stageup_date AT TIME ZONE 'UTC' as stageup_date, 
             created_at AT TIME ZONE 'UTC' as created_at, 
             last_access_at AT TIME ZONE 'UTC' as last_access_at
@@ -40,10 +39,9 @@ export async function getSession(sessionId: string): Promise<User | null> {
   return {
     sessionId: row.session_id,
     email: row.email,
-    trial: row.trial,
     has1DayPass: row.has_1day_pass,
     hasStandard: row.has_standard,
-    stage: Number(row.stage) ?? 0,
+    stage: row.stage,
     stageupDate: row.stageup_date ? new Date(row.stageup_date) : null,
     createdAt: new Date(row.created_at),
     lastAccessAt: new Date(row.last_access_at),
@@ -55,15 +53,14 @@ export async function createSession(sessionId: string): Promise<User> {
   // UTCで保存
   const now = new Date();
   await db.query(
-    `INSERT INTO sessions (session_id, email, trial, has_1day_pass, has_standard, stage, stageup_date, created_at, last_access_at)
-     VALUES ($1, NULL, FALSE, FALSE, FALSE, 1, $2, $2, $2)
+    `INSERT INTO sessions (session_id, email, has_1day_pass, has_standard, stage, stageup_date, created_at, last_access_at)
+     VALUES ($1, NULL, FALSE, FALSE, 1, $2, $2, $2)
      ON CONFLICT (session_id) DO NOTHING`,
     [sessionId, now.toISOString()]
   );
   return {
     sessionId,
     email: '',
-    trial: false,
     has1DayPass: false,
     hasStandard: false,
     stage: 1,
@@ -97,15 +94,7 @@ export async function updateSessionStandard(sessionId: string, hasStandard: bool
   );
 }
 
-export async function updateSessionTrial(sessionId: string, trial: boolean): Promise<void> {
-  const db = getDBClient();
-  await db.query(
-    `UPDATE sessions SET trial = $1, last_access_at = CURRENT_TIMESTAMP WHERE session_id = $2`,
-    [trial, sessionId]
-  );
-}
-
-export async function updateSessionStage(sessionId: string, stage: number): Promise<void> {
+export async function updateSession1DayPass(sessionId: string, has1DayPass: boolean): Promise<void> {
   const db = getDBClient();
   // UTCで保存
   const now = new Date();

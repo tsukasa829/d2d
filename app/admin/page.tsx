@@ -44,7 +44,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleTogglePass = async (sessionId: string, field: 'trial' | 'has1DayPass' | 'hasStandard', value: boolean) => {
+  const handleTogglePass = async (sessionId: string, field: 'has1DayPass' | 'hasStandard', value: boolean) => {
     try {
       await fetch(`/api/admin/users/${sessionId}`, {
         method: 'PATCH',
@@ -176,7 +176,6 @@ export default function AdminPage() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">メール</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Stage</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">ステージ更新日時</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trial</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">1日パス</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Standard</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">作成日時</th>
@@ -265,18 +264,6 @@ export default function AdminPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {user.stageupDate ? new Date(user.stageupDate).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }) : '未設定'}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <button
-                        onClick={() => handleTogglePass(user.sessionId, 'trial', user.trial)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user.trial
-                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        {user.trial ? '有効' : '無効'}
-                      </button>
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <button
