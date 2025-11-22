@@ -1,0 +1,149 @@
+---
+userAvatar: /avatars/cry.png
+defaultBot: other
+requireCorrect: true
+wrongMessage: "猫の気持ちになって、選んでみてください"
+bots:
+  other:
+    displayName: 相手猫
+    avatar: /avatars/otherCat.png
+  teacher:
+    displayName: ねこ先生
+    avatar: /avatars/teacherCat.png
+  tsubaki:
+    displayName: Tsubaki
+    avatar: /avatars/tsubaki.png
+  cry:
+    displayName: Sizuku
+    avatar: /avatars/cry.png
+---
+
+<!-- 挨拶とルール説明 -->
+Bot(tsubaki): ようこそ、D2Dへ。
+
+Bot(tsubaki): これから7日間、あなたは様々な感情を持つ猫になりきって、会話をしていきます。この世界では、どんな感情も許されます。リラックスして会話してみてください。
+
+User [avatar=none]:
+- o: 次へ
+
+Bot(tsubaki): この世界では私も猫の姿になります。ねこ先生と呼んでください。
+
+<!-- プロフィール紹介 -->
+Bot(teacher)[image]: /avatars/teacherCat.png
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- プロフィール紹介 -->
+Bot(teacher)[image]: /avatars/cry.png
+
+Bot(teacher): この子は悲しみ猫、シズク。悲しむのが大好きな子です。猫の世界では、どんな感情も許されます。もちろん、悲しみもOKです。悲しみ猫シズクになったつもりで、会話してみましょう!
+
+User [avatar=none]:
+- o: OK！
+
+Bot(teacher): これから相手役の猫が悲しみ猫に話しかけます。あなたは悲しみ猫になりきって返事を選んでください。
+
+User [avatar=none]:
+- o: はじめる
+
+<!-- セット1 -->
+Bot(other): さっきの集合写真、君が写ってなかった…ごめん…
+
+User:
+- x: まぁどうせ写り悪いよ
+- x: 気にしてないよ
+- o: みんなと写りたかったから…悲しかった
+
+Bot(other): そんな思いをさせてた…ごめん…
+
+Bot(teacher): 悲しい気持ちを否定しないのはとても大事ですね。よく言えましたね。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット2 -->
+Bot(other): 君が大事にしてたおもちゃ…壊れちゃった…
+
+User:
+- x: そんなのいらないよ
+- o: 壊れてショックだ…大事だったのに
+- x: 新しいの買えばいいよ
+
+Bot(other): 悲しいよね…ごめんね
+
+Bot(teacher): 失った悲しみを大事に扱えるのは素晴らしいですね。もっと悲しんでもいいんですよ。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット3 -->
+Bot(other): 一緒に作ったケーキ、こっそり誰かが食べちゃったみたい…
+
+User:
+- o: 楽しみにしてたのに…悲しい
+- x: どうせ美味しくなかったよ
+- x: 誰でもいいよ
+
+Bot(other): 楽しみにしてたのにね…また今度つくろう！
+
+Bot(teacher): 期待してた分だけ悲しむのは自然ですね。どんどん表現していいんです。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット4 -->
+Bot(other): メッセージ返そうと思って寝落ちしちゃった…返事できなくてごめん…
+
+User:
+- o: 返事がなくて寂しかった
+- x: 気にしてないよ
+- x: むしろ静かでよかったよ
+
+Bot(other): 寂しい思いさせたね…ほんとにごめん…
+
+Bot(teacher): 寂しさを認めるのは、とっても大切な心のケアですね。もっと悲しんでいいんです。
+
+User [avatar=none]:
+- o: 次へ
+
+<!-- セット5 -->
+Bot(other): 君の誕生日、みんな忘れてたみたいで…お祝いできなかった…
+
+User:
+- x: 別に誕生日なんてどうでもいいよ
+- x: 自分で祝えるから大丈夫だよ
+- o: 覚えててほしかった…悲しい
+
+Bot(other): 大事な日を忘れてた…本当にごめん…
+
+Bot(teacher): 大切にされたい気持ちを表現できましたね。悲しみは悪いことじゃありません。もっともっと悲しんでいいんです。
+
+Bot(teacher): 最後に、悲しみ猫シズクにお礼を言ってあげましょう
+
+Bot(cry)[image]: /avatars/cry.png
+
+User:
+- o: 今日はありがとう
+- x: 悲しみなんてなくなればいいのに
+
+Bot(cry): うん…終わっちゃうの悲しいけど
+Bot(cry): きっとまた会えるよ
+Bot(cry): これあげる
+Bot(cry)[image]: /avatars/map.png
+
+User:
+- o: 受け取る
+
+Bot(teacher): シズクからプレゼントをもらえました
+Bot(teacher): これは特別な”ある猫”の場所が載ってる地図です。あなたもいつか会える日が来るかもしれません。
+Bot(teacher): 明日は怒り猫をご紹介します。楽しい子ですよ。きっと仲良くなれます。
+
+User [avatar=none]:
+- o: Day2へ進む
+- x: ここでD2Dを終了する
+
+Bot(teacher): Day1お疲れ様でした。次のセッションまで少し休憩しましょう。Day2は５分後にはじまります。
+
+Bot(teacher)[redirect]: /stageup?nextStage=2 | 2000
+
