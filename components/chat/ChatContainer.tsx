@@ -23,6 +23,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const choicesRef = useRef<HTMLDivElement | null>(null);
+  const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
   const prevLenRef = useRef<number>(0);
   const shouldScrollRef = useRef<boolean>(false);
 
@@ -75,9 +76,9 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
     return () => clearInterval(t);
   }, []);
 
-  // Intersection Observer で選択肢エリアが画面に入ったら表示
+  // Intersection Observer（rootをスクロール領域に）で最下部まで到達したら選択肢を表示
   useEffect(() => {
-    if (!choicesRef.current || choices.length === 0) return;
+    if (!scrollRef.current || !bottomSentinelRef.current || choices.length === 0) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -85,13 +86,16 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
           setShowChoices(true);
         }
       },
-      { threshold: 0.3 }
+      {
+        root: scrollRef.current,
+        threshold: 0.8,
+      }
     );
 
-    observer.observe(choicesRef.current);
+    observer.observe(bottomSentinelRef.current);
 
     return () => observer.disconnect();
-  }, [choices]);
+  }, [choices.length, messages.length]);
 
   // Redirect logic
   useEffect(() => {
@@ -150,13 +154,15 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
               return <MessageBubble key={m.id} message={m} index={index} />;
             })
           }
+          {/* スクロール最下部検知用のセントネル */}
+          <div ref={bottomSentinelRef} className="h-1" />
         </div>
       )}
 
       {/* Input Area with Choice Buttons */}
       {!loading && (
         <div ref={choicesRef} className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
-          <div className={`transition-opacity duration-500 ${showChoices ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`transition-opacity duration-500 ${showChoices ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <ChoiceButtons choices={choices} onSelect={handleSelect} isPaymentMode={isPaymentMode} />
           </div>
         </div>
