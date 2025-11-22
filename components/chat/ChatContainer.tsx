@@ -150,7 +150,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
       {/* Header (shared) */}
       <AppHeader>
         <div className="flex items-center justify-between w-full px-4">
-          <button onClick={() => window.history.back()} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
+          <button onClick={() => router.push('/')} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
             <Menu className="w-6 h-6" />
           </button>
           <h1 className="tracking-wide font-semibold">D2D</h1>
