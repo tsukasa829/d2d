@@ -62,9 +62,9 @@ export default function Home() {
     { day: 2, title: "自分の怒りに気づく", completed: stage > 2, accessible: stage >= 2, path: "/chat/day2" },
     { day: 3, title: "封印してきた、本当の願い", completed: stage > 3, accessible: stage >= 3, path: "/chat/day3" },
     { day: 4, title: "あなたの中にいる敵の正体", completed: stage > 4, accessible: stage >= 4, path: "/chat/day4" },
-    { day: 5, title: "不幸ループから抜け出る", completed: stage > 5, accessible: stage >= 5, path: "/chat/day5" },
-    { day: 6, title: "本当の自分に出会う", completed: stage > 6, accessible: stage >= 6, path: "/chat/day6" },
-    { day: 7, title: "頑張らなくても自然と周りが変わってく", completed: stage > 7, accessible: stage >= 7, path: "/chat/day7" },
+    { day: 5, title: "１人反省会ループを終わらせる", completed: stage > 5, accessible: stage >= 5, path: "/chat/day5" },
+    { day: 6, title: "心のなかに自分応援団ができる", completed: stage > 6, accessible: stage >= 6, path: "/chat/day6" },
+    { day: 7, title: "頑張らなくても自然に愛される人に", completed: stage > 7, accessible: stage >= 7, path: "/chat/day7" },
   ];
   const completedCount = days.filter((d) => d.completed).length;
 
