@@ -19,8 +19,10 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [choices, setChoices] = useState<{ label: string; value: string }[]>([]);
   const [isPaymentMode, setIsPaymentMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showChoices, setShowChoices] = useState(false);
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const choicesRef = useRef<HTMLDivElement | null>(null);
   const prevLenRef = useRef<number>(0);
   const shouldScrollRef = useRef<boolean>(false);
 
@@ -67,10 +69,29 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
         setMessages(list);
         setChoices(mgr.getCurrentChoices());
         setIsPaymentMode(mgr.isPaymentMode());
+        setShowChoices(false); // 新しい選択肢が来たら非表示にリセット
       }
     }, 200);
     return () => clearInterval(t);
   }, []);
+
+  // Intersection Observer で選択肢エリアが画面に入ったら表示
+  useEffect(() => {
+    if (!choicesRef.current || choices.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowChoices(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(choicesRef.current);
+
+    return () => observer.disconnect();
+  }, [choices]);
 
   // Redirect logic
   useEffect(() => {
@@ -134,8 +155,10 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
 
       {/* Input Area with Choice Buttons */}
       {!loading && (
-        <div className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
-          <ChoiceButtons choices={choices} onSelect={handleSelect} isPaymentMode={isPaymentMode} />
+        <div ref={choicesRef} className="bg-white/30 backdrop-blur-md border-t border-white/40 px-4 py-4 shadow-lg">
+          <div className={`transition-opacity duration-500 ${showChoices ? 'opacity-100' : 'opacity-0'}`}>
+            <ChoiceButtons choices={choices} onSelect={handleSelect} isPaymentMode={isPaymentMode} />
+          </div>
         </div>
       )}
     </div>
