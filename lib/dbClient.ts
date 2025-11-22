@@ -60,6 +60,8 @@ class PostgreSQLClient implements DBClient {
 
     this.pool = new Pool({
       connectionString: databaseUrl,
+      // データベースのタイムゾーンをUTCに設定
+      options: '-c timezone=UTC',
     });
   }
 

@@ -264,7 +264,7 @@ export default function AdminPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
-                      {user.stageupDate ? new Date(user.stageupDate).toLocaleString('ja-JP') : '未設定'}
+                      {user.stageupDate ? new Date(user.stageupDate).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }) : '未設定'}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <button
