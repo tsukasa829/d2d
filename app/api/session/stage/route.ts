@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateSessionStage, getSessionById } from '@/lib/session';
+import { updateSessionStage, getSession } from '@/lib/session';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     await updateSessionStage(sessionId, stage);
-    const updated = await getSessionById(sessionId);
+    const updated = await getSession(sessionId);
     return NextResponse.json({ success: true, user: updated });
   } catch (error) {
     console.error('[session/stage] Error:', error);
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     console.log('[API POST /session/stage] Calling updateSessionStage');
     await updateSessionStage(sessionId, stage);
     console.log('[API POST /session/stage] Getting updated user');
-    const updated = await getSessionById(sessionId);
+    const updated = await getSession(sessionId);
     console.log('[API POST /session/stage] Success, returning user:', updated);
     return NextResponse.json({ success: true, user: updated });
   } catch (error) {
