@@ -85,8 +85,10 @@ npm run dev
 - `npm run build` - 本番ビルド
 - `npm run start` - 本番サーバー起動
 - `npm run migrate` - マイグレーション手動実行
+- `npm run migrate:prod` - 本番環境でマイグレーション実行
 - `npm run db:reset` - データベースリセット（開発環境のみ）
 - `npm run lint` - ESLint実行
+- `npm run netlify:env:sync` - `.env.production`の環境変数をNetlify本番環境に同期
 
 ## データベース設計
 
@@ -142,6 +144,22 @@ npm run start
 ```
 
 Vercel、Railway、Renderなどのプラットフォームにデプロイ可能です。
+
+### 環境変数の本番環境への反映
+
+`.env.production`の環境変数をNetlify本番環境に反映するには：
+
+```bash
+npm run netlify:env:sync
+```
+
+このコマンドは以下の環境変数を自動的に同期します：
+- `DATABASE_URL`
+- `NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL`
+- `NEXT_PUBLIC_STRIPE_1DAYPASS_PAYMENT_URL`
+
+> [!NOTE]
+> 環境変数を本番に入れる必要がある場合は、このコマンドを実行してください。
 
 ## 将来の拡張
 
