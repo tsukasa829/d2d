@@ -21,7 +21,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const [loading, setLoading] = useState(true);
   const [showChoices, setShowChoices] = useState(false);
   // Choices reveal delay (ms): change here when needed
-  const CHOICES_REVEAL_DELAY_MS = 2000; // 2 seconds
+  const CHOICES_REVEAL_DELAY_MS = 1000; // 1 second
   const managerRef = useRef<ChatManager | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const choicesRef = useRef<HTMLDivElement | null>(null);
