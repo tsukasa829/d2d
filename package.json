@@ -17,7 +17,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:prod": "set BASE_URL=https://d2d-tsubaki.netlify.app/&& playwright test -g @smoke",
-    "test:e2e:prod:all": "set BASE_URL=https://d2d-tsubaki.netlify.app/&& playwright test"
+    "test:e2e:prod:all": "set BASE_URL=https://d2d-tsubaki.netlify.app/&& playwright test",
+    "netlify:env:sync": "netlify env:set DATABASE_URL \"postgresql://neondb_owner:npg_9St8JFvIZKVg@ep-icy-mode-a1kgn52n-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" --context production && netlify env:set NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL \"https://buy.stripe.com/fZubJ26CFg76gty2Ca08g02\" --context production && netlify env:set NEXT_PUBLIC_STRIPE_1DAYPASS_PAYMENT_URL \"https://buy.stripe.com/28EdRa0ehbQQ7X26Sq08g03\" --context production"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",
