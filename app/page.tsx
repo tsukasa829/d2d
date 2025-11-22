@@ -157,15 +157,6 @@ export default function Home() {
             );
           })}
         </div>
-
-        <div className="mt-8 space-y-3">
-          <Link
-            href="/day2/waiting"
-            className="w-full px-6 py-4 bg-white/60 backdrop-blur-md border border-white/60 text-[#9333EA] rounded-2xl hover:shadow-xl hover:bg-white/70 transition-all flex items-center justify-center gap-2"
-          >
-            <Calendar className="w-5 h-5" /> 次回予約の確認
-          </Link>
-        </div>
       </div>
     </div>
   );
