@@ -181,6 +181,8 @@ export class ChatManager {
                 buttonLabel: nodeToSend.buttonLabel,
                 buttonUrl: nodeToSend.buttonUrl,
                 buttons: nodeToSend.buttons,
+                redirectUrl: nodeToSend.redirectUrl,
+                redirectDelay: nodeToSend.redirectDelay,
               });
             }, accDelay + msgDelayMs * k);
             this.timers.push(t);
@@ -202,6 +204,8 @@ export class ChatManager {
               buttonLabel: nodeToSend.buttonLabel,
               buttonUrl: nodeToSend.buttonUrl,
               buttons: nodeToSend.buttons,
+              redirectUrl: nodeToSend.redirectUrl,
+              redirectDelay: nodeToSend.redirectDelay,
             });
           }
         }
