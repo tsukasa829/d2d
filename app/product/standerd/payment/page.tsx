@@ -72,7 +72,7 @@ export default function StandardPaymentPage() {
               </button>
             )}
 
-            <p className="text-xs text-gray-600 text-center">お支払いリンクは安全なStripe決済を利用します</p>
+            
           </div>
         </div>
       </div>
