@@ -5,7 +5,7 @@ import { Todo } from './types/todo';
 export async function getAllTodos(userId: string): Promise<Todo[]> {
   const client = getDBClient();
   const result = await client.query<Todo>(
-    'SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC',
+    'SELECT id, user_id, title, completed, created_at AT TIME ZONE \'UTC\' as created_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC',
     [userId]
   );
   
@@ -18,7 +18,7 @@ export async function getAllTodos(userId: string): Promise<Todo[]> {
 export async function createTodo(userId: string, title: string): Promise<Todo> {
   const client = getDBClient();
   const result = await client.query<Todo>(
-    'INSERT INTO todos (user_id, title) VALUES ($1, $2) RETURNING *',
+    'INSERT INTO todos (user_id, title) VALUES ($1, $2) RETURNING id, user_id, title, completed, created_at AT TIME ZONE \'UTC\' as created_at',
     [userId, title]
   );
   
@@ -53,7 +53,7 @@ export async function updateTodo(id: string, data: Partial<Pick<Todo, 'title' | 
   values.push(id);
   
   const result = await client.query<Todo>(
-    `UPDATE todos SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+    `UPDATE todos SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING id, user_id, title, completed, created_at AT TIME ZONE 'UTC' as created_at`,
     values
   );
   
@@ -86,7 +86,7 @@ export async function deleteTodo(id: string): Promise<void> {
 export async function getUserById(id: string): Promise<User | null> {
   const client = getDBClient();
   const result = await client.query<User>(
-    'SELECT * FROM users WHERE id = $1',
+    'SELECT id, email, name, google_id, created_at AT TIME ZONE \'UTC\' as created_at FROM users WHERE id = $1',
     [id]
   );
   
@@ -104,7 +104,7 @@ export async function getUserById(id: string): Promise<User | null> {
 export async function createUser(email: string, name: string, googleId?: string): Promise<User> {
   const client = getDBClient();
   const result = await client.query<User>(
-    'INSERT INTO users (email, name, google_id) VALUES ($1, $2, $3) RETURNING *',
+    'INSERT INTO users (email, name, google_id) VALUES ($1, $2, $3) RETURNING id, email, name, google_id, created_at AT TIME ZONE \'UTC\' as created_at',
     [email, name, googleId || null]
   );
   
@@ -118,7 +118,7 @@ export async function createUser(email: string, name: string, googleId?: string)
 export async function getUserByEmail(email: string): Promise<User | null> {
   const client = getDBClient();
   const result = await client.query<User>(
-    'SELECT * FROM users WHERE email = $1',
+    'SELECT id, email, name, google_id, created_at AT TIME ZONE \'UTC\' as created_at FROM users WHERE email = $1',
     [email]
   );
   
