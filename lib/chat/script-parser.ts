@@ -5,7 +5,8 @@ import { ChatScript, ScriptNode, Choice } from '../types/chat';
 // - フロントマター: userAvatar, botAvatar
 // - 本文: 行頭が "Bot:" / "User:" のブロックを解釈
 //   - User ブロック直後の箇条書き (- ラベル) を選択肢として収集
-export function parseScript(markdown: string): ChatScript {
+// - startLine: 指定した行番号(1-indexed)以降のみパース（開発用）
+export function parseScript(markdown: string, startLine?: number): ChatScript {
   const { data, content } = matter(markdown);
 
   const userAvatar = String(data?.userAvatar || '/avatars/user.png');
@@ -15,7 +16,9 @@ export function parseScript(markdown: string): ChatScript {
   const wrongMessage = typeof data?.wrongMessage === 'string' ? String(data.wrongMessage) : undefined;
   const bots = typeof data?.bots === 'object' ? (data.bots as Record<string, { displayName?: string; avatar: string }>) : undefined;
 
-  const lines = content.split(/\r?\n/);
+  const allLines = content.split(/\r?\n/);
+  // startLineが指定されていたら、その行以降のみ処理（1-indexed）
+  const lines = startLine && startLine > 1 ? allLines.slice(startLine - 1) : allLines;
   const nodes: ScriptNode[] = [];
 
   let i = 0;

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Menu, MoreVertical } from 'lucide-react';
 import AppHeader from '@/components/ui/AppHeader';
 import MessageBubble from './MessageBubble';
@@ -15,6 +15,7 @@ import LoadingScreen from '@/components/ui/LoadingScreen';
 
 export default function ChatContainer({ sessionId }: { sessionId: string }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [choices, setChoices] = useState<{ label: string; value: string }[]>([]);
   const [isPaymentMode, setIsPaymentMode] = useState(false);
@@ -33,6 +34,10 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      // URLクエリから開始行を取得（開発用）
+      const startLine = searchParams.get('startLine');
+      const startLineNum = startLine ? Number(startLine) : undefined;
+
       // スクリプト取得（API経由）
       let res = await fetch(`/api/chat-script/${sessionId}`);
       if (!res.ok) {
@@ -40,7 +45,7 @@ export default function ChatContainer({ sessionId }: { sessionId: string }) {
         res = await fetch(`/api/chat-script/example`);
       }
       const md = res.ok ? await res.text() : '';
-      const script = parseScript(md);
+      const script = parseScript(md, startLineNum);
       managerRef.current = new ChatManager(script);
 
       // 初期化
