@@ -4,7 +4,7 @@ import { CreditCard, CalendarClock, Banknote } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 
 export default function StandardPaymentPage() {
-  const paymentUrl = process.env.NEXT_PUBLIC_STRIPE_STANDARD_PAYMENT_URL;
+  const paymentUrl = "";
 
   return (
     <div className="min-h-screen max-w-md mx-auto bg-gradient-to-br from-[#E9D5FF] via-purple-100 to-[#B794F6]">

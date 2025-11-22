@@ -31,6 +31,8 @@ Bot(tsubaki): この世界では私も猫の姿になります。ねこ先生と
 <!-- プロフィール紹介 -->
 Bot(teacher)[image]: /avatars/teacherCat.png
 
+Bot(teacher): まず最初に演じてもらう猫は、
+
 User [avatar=none]:
 - o: 次へ
 
